@@ -16,10 +16,9 @@ libraryDependencies ++= Seq(
 libraryDependencies += "commons-dbutils" % "commons-dbutils" % "1.6"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
+
 fork in run := false
 
-packageName in Universal := "connector"
-herokuAppName in Compile := "connector"
 
 lazy val connector = (project in file("."))
   .enablePlugins(PlayJava, PlayEbean)
@@ -27,3 +26,14 @@ lazy val connector = (project in file("."))
   .dependsOn(sdk)
 
 lazy val sdk = (project in file("sdk")).enablePlugins(PlayJava, PlayEbean)
+
+doc in Compile <<= target.map(_ / "none")
+
+packageName in Universal := "connector_sample_0.1"
+herokuAppName in Compile := "connector"
+
+mappings in Universal ++=
+  (baseDirectory.value / "sdk/connector_start.sh" get) map
+    (x => x -> x.getName)
+mappings in Universal ++= (baseDirectory.value / "sdk/connector_stop.sh" get) map
+    (x => x -> x.getName)
