@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "commons-dbutils" % "commons-dbutils" % "1.6"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
-
+playEbeanModels in Compile := Seq("sdk.sample.model.*")
 
 fork in run := false
 
