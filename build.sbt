@@ -1,4 +1,4 @@
-name := "connector"
+name := "uic"
 
 version := "1.0-SNAPSHOT"
 
@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "commons-dbutils" % "commons-dbutils" % "1.6"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
-playEbeanModels in Compile := Seq("sdk.sample.model.*")
+libraryDependencies += "postgresql" % "postgresql" % "9.3-1102.jdbc41"
 
 fork in run := false
 
@@ -29,7 +29,7 @@ lazy val sdk = (project in file("sdk")).enablePlugins(PlayJava, PlayEbean)
 
 doc in Compile <<= target.map(_ / "none")
 
-packageName in Universal := "connector_sample_0.1"
+packageName in Universal := "uic"
 herokuAppName in Compile := "connector"
 
 mappings in Universal ++=
