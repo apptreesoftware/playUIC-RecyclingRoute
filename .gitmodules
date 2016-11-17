@@ -1,3 +1,3 @@
 [submodule "sdk"]
 	path = sdk
-	url = git@bitbucket.org:apptreesoftware/playsdk.git
+url=https://github.com/apptreesoftware/playsdk.git
