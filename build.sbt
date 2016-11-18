@@ -3,6 +3,7 @@ name := "uic"
 version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
+resolvers += "clojars" at "https://clojars.org/repo"
 
 scalaVersion := "2.11.7"
 
