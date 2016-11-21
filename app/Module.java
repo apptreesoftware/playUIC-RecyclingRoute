@@ -1,4 +1,5 @@
 import com.google.inject.AbstractModule;
+import data.RouteDataSource;
 import list.VehicleListDataSource;
 import sdk.AppTree;
 
@@ -17,7 +18,10 @@ public class Module extends AbstractModule {
     @Override
     public void configure()
     {
+
+        AppTree.registerDataSourceWithName("route",new RouteDataSource());
         AppTree.registerListDataSourceWithName("vehicles", new VehicleListDataSource());
+
     }
 
 }
