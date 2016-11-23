@@ -29,21 +29,29 @@ public class RouteStopPickupItem extends Model {
     @JoinColumn(name = "route_stop_id", referencedColumnName = "route_stop_id")
     RouteStop routeStop;
 
-    public static List<ServiceConfigurationAttribute> getServiceAttributes() {
+    static List<ServiceConfigurationAttribute> getServiceAttributes() {
         ArrayList<ServiceConfigurationAttribute> attributes = new ArrayList<>();
         attributes.add(new ServiceConfigurationAttribute.Builder(NAME).name("NAME").canCreate().canUpdate().build());
         return attributes;
     }
 
-    public DataSetItem copyInto(DataSetItem dataSetItem) {
+    DataSetItem copyInto(DataSetItem dataSetItem) {
         dataSetItem.setPrimaryKey(this.pickupItemId + "");
         dataSetItem.setStringForAttributeIndex(this.name, NAME);
         return dataSetItem;
     }
 
-    public void copyFrom(DataSetItem dataSetItem) {
-        this.pickupItemId = Integer.parseInt(dataSetItem.getPrimaryKey());
+    void copyFrom(DataSetItem dataSetItem) {
         this.name = dataSetItem.getStringAttributeAtIndex(NAME);
+        switch (dataSetItem.getCRUDStatus()) {
+            case Create:
+                this.insert();
+                break;
+            case Update:
+                this.pickupItemId = Integer.parseInt(dataSetItem.getPrimaryKey());
+                this.update();
+                break;
+        }
     }
 
     private static int NAME = 0;

@@ -72,7 +72,7 @@ public class RouteStop extends Model {
     }
 
     void copyFrom(DataSetItem dataSetItem) {
-        if ( dataSetItem.getCRUDStatus() != DataSetItem.CRUDStatus.Read ) {
+        if (dataSetItem.getCRUDStatus() != DataSetItem.CRUDStatus.Read) {
             this.name = dataSetItem.getStringAttributeAtIndex(NAME);
             this.streetAddress1 = dataSetItem.getStringAttributeAtIndex(STREET_1);
             this.streetAddress2 = dataSetItem.getStringAttributeAtIndex(STREET_2);
@@ -106,8 +106,8 @@ public class RouteStop extends Model {
         if (pickupItems != null) {
             pickupItems.forEach(item -> {
                 RouteStopPickupItem pickupItem = new RouteStopPickupItem();
+                pickupItem.routeStop = this;
                 pickupItem.copyFrom(dataSetItem);
-                this.pickupItems.add(pickupItem);
             });
         }
     }
@@ -117,7 +117,7 @@ public class RouteStop extends Model {
         String address2 = this.streetAddress2 != null ? this.streetAddress2 : "";
         String city = this.city != null ? this.city : "";
         String state = this.state != null ? this.state : "";
-        String zip = this.zip != null ? this.zip  : "";
+        String zip = this.zip != null ? this.zip : "";
 
         return String.format("%s %s\n%s %s %s", address1, address2, city, state, zip);
     }
@@ -208,6 +208,8 @@ public class RouteStop extends Model {
                 .asRelationship(new RelatedServiceConfiguration.Builder("Pickup Items")
                         .withAttributes(RouteStopPickupItem.getServiceAttributes())
                         .build())
+                .canCreate()
+                .canUpdate()
                 .build());
         attributes.add(new ServiceConfigurationAttribute.Builder(ADDRESS).name("ADDRESS")
                 .build());

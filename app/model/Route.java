@@ -32,6 +32,7 @@ public class Route extends Model {
     private DateTime modifyDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
+    @OrderBy(value = "route_stop_order")
     List<RouteStop> stops = new ArrayList<>();
 
     public static Model.Finder<Integer, Route> find = new Model.Finder<>(Route.class);
@@ -46,6 +47,8 @@ public class Route extends Model {
         attributes.add(new ServiceConfigurationAttribute.Builder(MODIFY_DATE).name("MODIFY_DATE").asDateTime().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(STOPS)
                 .name("Stops")
+                .canCreate()
+                .canUpdate()
                 .asRelationship(new RelatedServiceConfiguration.Builder("Stops")
                         .withAttributes(RouteStop.getServiceAttributes())
                         .build()
@@ -100,8 +103,10 @@ public class Route extends Model {
                     case Create:
                         routeStop.route = this;
                         routeStop.copyFrom(stop);
+                        break;
                     case Update:
                         routeStop.copyFrom(stop);
+                        break;
                 }
             }
         }
