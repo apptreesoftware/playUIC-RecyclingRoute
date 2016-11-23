@@ -4,6 +4,7 @@ import model.Route;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
+import sdk.datasources.RecordActionResponse;
 import sdk.datasources.base.DataSource;
 import sdk.utils.AuthenticationInfo;
 import sdk.utils.Parameters;
@@ -38,6 +39,18 @@ public class RouteDataSource implements DataSource {
             throw new RuntimeException("Route not found");
         }
         return route.copyInto(new DataSetItem(getAttributes()));
+    }
+
+    @Override
+    public RecordActionResponse updateRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
+        Route route = Route.find.byId(Integer.parseInt(dataSetItem.getPrimaryKey()));
+        if ( route == null ) throw new RuntimeException("Route not found");
+        route.copyFrom(dataSetItem);
+        route.copyInto(dataSetItem);
+        return new RecordActionResponse.Builder()
+                .withMessage("Submission successful")
+                .withRecord(dataSetItem)
+                .build();
     }
 
     //    enum Action {

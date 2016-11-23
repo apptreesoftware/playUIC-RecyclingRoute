@@ -70,19 +70,39 @@ public class Route extends Model {
     }
 
     public void copyFrom(DataSetItem dataSetItem) {
-        this.routeID = Integer.parseInt(dataSetItem.getPrimaryKey());
-        this.description = dataSetItem.getStringAttributeAtIndex(DESCRIPTION);
-        this.city = dataSetItem.getStringAttributeAtIndex(CITY);
-        this.state = dataSetItem.getStringAttributeAtIndex(STATE);
-        this.zip = dataSetItem.getStringAttributeAtIndex(ZIP);
-        this.enterDate = dataSetItem.getDateTimeAttributeAtIndex(ENTER_DATE);
-        this.modifyDate = dataSetItem.getDateTimeAttributeAtIndex(MODIFY_DATE);
+        if ( dataSetItem.getCRUDStatus() != DataSetItem.CRUDStatus.Read ) {
+            this.description = dataSetItem.getStringAttributeAtIndex(DESCRIPTION);
+            this.city = dataSetItem.getStringAttributeAtIndex(CITY);
+            this.state = dataSetItem.getStringAttributeAtIndex(STATE);
+            this.zip = dataSetItem.getStringAttributeAtIndex(ZIP);
+            if ( this.enterDate != null ) {
+                this.enterDate = DateTime.now();
+            }
+            this.modifyDate = DateTime.now();
+        }
+        switch (dataSetItem.getCRUDStatus()) {
+            case Create:
+                this.insert();
+                break;
+            case Update:
+                this.routeID = Integer.parseInt(dataSetItem.getPrimaryKey());
+                this.update();
+                break;
+            default:
+                break;
+        }
+
         List<DataSetItem> stops = dataSetItem.getDataSetItemsAtIndex(STOPS);
         if ( stops != null ) {
             for ( DataSetItem stop : stops ) {
                 RouteStop routeStop = new RouteStop();
-                routeStop.copyFrom(stop);
-                this.stops.add(routeStop);
+                switch (stop.getCRUDStatus()) {
+                    case Create:
+                        routeStop.route = this;
+                        routeStop.copyFrom(stop);
+                    case Update:
+                        routeStop.copyFrom(stop);
+                }
             }
         }
     }
