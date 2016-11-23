@@ -1,114 +1,97 @@
 package model;
 
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import play.libs.Json;
+import com.avaje.ebean.Model;
+import org.joda.time.DateTime;
 import sdk.data.DataSetItem;
 import sdk.data.RelatedServiceConfiguration;
 import sdk.data.ServiceConfigurationAttribute;
-import util.Constants;
-import util.DataUtils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by eddie on 11/21/16.
  */
-public enum Route implements ModelAttribute {
-    RouteID(0,"ROUTE_ID"),
-    RouteDescription(1, "ROUTE_DESC"),
-    City(2,"CITY"),
-    State(3, "STATE"),
-    Zip(4, "ZIP"),
-    EnterDate(5, "ENTER_DATE"),
-    ModifyDate(6, "MODIFY_DATE"),
-    //Repeating forms
-    RouteStops(30, "");
+@Entity
+@Table(name = "grr_route")
+public class Route extends Model {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "route_id_seq")
+    int routeID;
 
-    private int attributeIndex;
-    private String columnName;
-    private Route(int attributeIndex, String columnName) {
-        this.attributeIndex = attributeIndex;
-        this.columnName = columnName;
+    @Column(name = "route_desc")
+    private String description;
+    private String city;
+    private String state;
+    private String zip;
+    private DateTime enterDate;
+    private DateTime modifyDate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
+    List<RouteStop> stops = new ArrayList<>();
+
+    public static Model.Finder<Integer, Route> find = new Model.Finder<>(Route.class);
+
+    public static Set<ServiceConfigurationAttribute> getServiceAttributes() {
+        HashSet<ServiceConfigurationAttribute> attributes = new HashSet<>();
+        attributes.add(new ServiceConfigurationAttribute.Builder(DESCRIPTION).name("Description").asText().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CITY).name("CITY").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(STATE).name("STATE").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ZIP).name("ZIP").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ENTER_DATE).name("ENTER_DATE").asDateTime().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(MODIFY_DATE).name("MODIFY_DATE").asDateTime().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(STOPS)
+                .name("Stops")
+                .asRelationship(new RelatedServiceConfiguration.Builder("Stops")
+                        .withAttributes(RouteStop.getServiceAttributes())
+                        .build()
+                )
+                .build()
+        );
+        return attributes;
     }
 
-    @Override
-    public String getColumnName() {
-        return columnName;
+    public DataSetItem copyInto(DataSetItem dataSetItem) {
+        dataSetItem.setPrimaryKey(routeID + "");
+        dataSetItem.setStringForAttributeIndex(description, DESCRIPTION);
+        dataSetItem.setStringForAttributeIndex(city, CITY);
+        dataSetItem.setStringForAttributeIndex(state, STATE);
+        dataSetItem.setStringForAttributeIndex(zip, ZIP);
+        dataSetItem.setDateTimeForAttributeIndex(enterDate, ENTER_DATE);
+        dataSetItem.setDateTimeForAttributeIndex(modifyDate, MODIFY_DATE);
+        for ( RouteStop stop : stops ) {
+            stop.copyInto(dataSetItem.addNewDataSetItemForAttributeIndex(STOPS));
+        }
+        return dataSetItem;
     }
 
-    @Override
-    public int getAttributeIndex() {
-        return attributeIndex;
+    public void copyFrom(DataSetItem dataSetItem) {
+        this.routeID = Integer.parseInt(dataSetItem.getPrimaryKey());
+        this.description = dataSetItem.getStringAttributeAtIndex(DESCRIPTION);
+        this.city = dataSetItem.getStringAttributeAtIndex(CITY);
+        this.state = dataSetItem.getStringAttributeAtIndex(STATE);
+        this.zip = dataSetItem.getStringAttributeAtIndex(ZIP);
+        this.enterDate = dataSetItem.getDateTimeAttributeAtIndex(ENTER_DATE);
+        this.modifyDate = dataSetItem.getDateTimeAttributeAtIndex(MODIFY_DATE);
+        List<DataSetItem> stops = dataSetItem.getDataSetItemsAtIndex(STOPS);
+        if ( stops != null ) {
+            for ( DataSetItem stop : stops ) {
+                RouteStop routeStop = new RouteStop();
+                routeStop.copyFrom(stop);
+                this.stops.add(routeStop);
+            }
+        }
     }
 
-    public static List<ServiceConfigurationAttribute> getAttributes() {
-        ArrayList<ServiceConfigurationAttribute> list = new ArrayList<>();
-        list.add(new ServiceConfigurationAttribute.Builder(RouteID.attributeIndex)
-                .name(RouteID.name())
-                .canUpdateAndRequired()
-                .canSearch()
-                .asInt()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(RouteDescription.attributeIndex)
-                .name(RouteDescription.name())
-                .canSearch()
-                .canCreateAndRequired()
-                .canUpdateAndRequired()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(City.attributeIndex)
-                .name(City.name())
-                .canSearch()
-                .canCreate()
-                .canUpdate()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(State.attributeIndex)
-                .name(State.name())
-                .canSearch()
-                .canCreate()
-                .canUpdate()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(Zip.attributeIndex)
-                .name(Zip.name())
-                .canSearch()
-                .canCreate()
-                .canUpdate()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(EnterDate.attributeIndex)
-                .name(EnterDate.name())
-                .asDate()
-                .canSearch()
-                .canCreate()
-                .canUpdate()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(ModifyDate.attributeIndex)
-                .name(ModifyDate.name())
-                .asDate()
-                .canSearch()
-                .canCreate()
-                .canUpdate()
-                .build());
-        list.add(new ServiceConfigurationAttribute.Builder(Route.RouteStops.attributeIndex)
-                .name("RouteStops")
-                .canUpdate()
-                .canCreate()
-                .asSingleRelationship(new RelatedServiceConfiguration(RouteStops.name(), RouteStop.getAttributes()))
-                .build());
-        return list;
-    }
-
-    public static void updateDataSetItemFromResultSet(DataSetItem dataSetItem, ResultSet resultSet) throws SQLException {
-        dataSetItem.setPrimaryKey(resultSet.getString(RouteID.columnName));
-        dataSetItem.setIntForAttributeIndex(resultSet.getInt(RouteID.columnName), RouteID.attributeIndex);
-        dataSetItem.setStringForAttributeIndex(resultSet.getString(RouteDescription.columnName), RouteDescription.attributeIndex);
-        dataSetItem.setStringForAttributeIndex(resultSet.getString(City.columnName), City.attributeIndex);
-        dataSetItem.setStringForAttributeIndex(resultSet.getString(State.columnName), State.attributeIndex);
-        dataSetItem.setStringForAttributeIndex(resultSet.getString(Zip.columnName), Zip.attributeIndex);
-        dataSetItem.setDateForAttributeIndex(DataUtils.dateTimeFromSQLDate(resultSet.getDate(EnterDate.columnName)), EnterDate.attributeIndex);
-        dataSetItem.setDateForAttributeIndex(DataUtils.dateTimeFromSQLDate(resultSet.getDate(ModifyDate.columnName)), ModifyDate.attributeIndex);
-    }
-
+    private static int DESCRIPTION = 0;
+    private static int CITY = 1;
+    private static int STATE = 2;
+    private static int ZIP = 3;
+    private static int ENTER_DATE = 4;
+    private static int MODIFY_DATE = 5;
+    private static int STOPS = 6;
 }
