@@ -52,9 +52,10 @@ public class VehicleDataSource implements DataSource {
         Vehicle vehicle = new Vehicle();
         vehicle.copyFrom(dataSetItem);
         vehicle.save();
+        DataSetItem responseItem = new DataSetItem(getAttributes());
         return new RecordActionResponse.Builder()
                 .withMessage("Submission Successful")
-                .withRecord(vehicle.copyInto(dataSetItem))
+                .withRecord(vehicle.copyInto(responseItem))
                 .build();
     }
 }

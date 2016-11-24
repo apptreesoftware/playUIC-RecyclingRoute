@@ -3,7 +3,6 @@ package model;
 import com.avaje.ebean.Model;
 import org.joda.time.DateTime;
 import sdk.data.DataSetItem;
-import sdk.data.RelatedServiceConfiguration;
 import sdk.data.ServiceConfigurationAttribute;
 import sdk.models.Location;
 
@@ -39,12 +38,33 @@ public class RouteStop extends Model {
     private DateTime enterDate;
     private DateTime modifyDate;
 
+    @OneToOne
+    @JoinColumn(name = "pickup_item_1")
+    PickupType pickupItem1;
+
+    @OneToOne
+    @JoinColumn(name = "pickup_item_1_measurement")
+    QuantityType pickupItem1QuantityType;
+
+    @OneToOne
+    @JoinColumn(name = "pickup_item_2")
+    PickupType pickupItem2;
+
+    @OneToOne
+    @JoinColumn(name = "pickup_item_2_measurement")
+    QuantityType pickupItem2QuantityType;
+
+    @OneToOne
+    @JoinColumn(name = "pickup_item_3")
+    PickupType pickupItem3;
+
+    @OneToOne
+    @JoinColumn(name = "pickup_item_3_measurement")
+    QuantityType pickupItem3QuantityType;
+
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "route_id")
     Route route;
-
-    @OneToMany(mappedBy = "routeStop")
-    private List<RouteStopPickupItem> pickupItems;
 
     public static Model.Finder<Integer, RouteStop> find = new Model.Finder<>(RouteStop.class);
 
@@ -65,9 +85,12 @@ public class RouteStop extends Model {
         dataSetItem.setDateTimeForAttributeIndex(this.modifyDate, MODIFY_DATE);
         dataSetItem.setIntForAttributeIndex(this.routeStopOrder, ORDER);
         dataSetItem.setStringForAttributeIndex(getAddress(), ADDRESS);
-        pickupItems.forEach(item -> {
-            item.copyInto(dataSetItem.addNewDataSetItemForAttributeIndex(PICKUP_ITEMS));
-        });
+        if (pickupItem1 != null) dataSetItem.setListItemForAttributeIndex(pickupItem1.toListItem(), PICKUP_ITEM_1);
+        if (pickupItem2 != null) dataSetItem.setListItemForAttributeIndex(pickupItem2.toListItem(), PICKUP_ITEM_2);
+        if (pickupItem3 != null) dataSetItem.setListItemForAttributeIndex(pickupItem3.toListItem(), PICKUP_ITEM_3);
+        if(pickupItem1QuantityType != null) dataSetItem.setListItemForAttributeIndex(pickupItem1QuantityType.toListItem(), PICKUP_ITEM_1_TYPE);
+        if(pickupItem2QuantityType != null) dataSetItem.setListItemForAttributeIndex(pickupItem2QuantityType.toListItem(), PICKUP_ITEM_2_TYPE);
+        if(pickupItem3QuantityType != null) dataSetItem.setListItemForAttributeIndex(pickupItem3QuantityType.toListItem(), PICKUP_ITEM_3_TYPE);
         return dataSetItem;
     }
 
@@ -91,6 +114,12 @@ public class RouteStop extends Model {
             this.enterDate = this.enterDate != null ? this.enterDate : DateTime.now();
             this.modifyDate = DateTime.now();
             this.routeStopOrder = dataSetItem.getIntAttributeAtIndex(ORDER);
+            dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_1).ifPresent(listItem -> this.pickupItem1 = new PickupType(listItem));
+            dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_2).ifPresent(listItem -> this.pickupItem2 = new PickupType(listItem));
+            dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_3).ifPresent(listItem -> this.pickupItem3 = new PickupType(listItem));
+            dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_1_TYPE).ifPresent(listItem -> this.pickupItem1QuantityType = new QuantityType(listItem));
+            dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_2_TYPE).ifPresent(listItem -> this.pickupItem2QuantityType = new QuantityType(listItem));
+            dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_3_TYPE).ifPresent(listItem -> this.pickupItem3QuantityType = new QuantityType(listItem));
         }
         switch (dataSetItem.getCRUDStatus()) {
             case Create:
@@ -100,15 +129,6 @@ public class RouteStop extends Model {
                 this.routeStopId = Integer.parseInt(dataSetItem.getPrimaryKey());
                 this.update();
                 break;
-        }
-
-        List<DataSetItem> pickupItems = dataSetItem.getDataSetItemsAtIndex(PICKUP_ITEMS);
-        if (pickupItems != null) {
-            pickupItems.forEach(item -> {
-                RouteStopPickupItem pickupItem = new RouteStopPickupItem();
-                pickupItem.routeStop = this;
-                pickupItem.copyFrom(dataSetItem);
-            });
         }
     }
 
@@ -136,84 +156,37 @@ public class RouteStop extends Model {
     private static int ENTER_DATE = 11;
     private static int MODIFY_DATE = 12;
     private static int ORDER = 13;
-    private static int PICKUP_ITEMS = 14;
     private static int ADDRESS = 15;
+    private static int PICKUP_ITEM_1 = 16;
+    private static int PICKUP_ITEM_1_TYPE = 17;
+    private static int PICKUP_ITEM_2 = 18;
+    private static int PICKUP_ITEM_2_TYPE = 19;
+    private static int PICKUP_ITEM_3 = 20;
+    private static int PICKUP_ITEM_3_TYPE = 21;
 
     public static List<ServiceConfigurationAttribute> getServiceAttributes() {
         List<ServiceConfigurationAttribute> attributes = new ArrayList<>();
-        attributes.add(new ServiceConfigurationAttribute.Builder(NAME).name("Name")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(STREET_1).name("STREET 1")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(STREET_2).name("STREET 2")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(CITY).name("City")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(STATE).name("STATE")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(ZIP).name("ZIP")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_NAME).name("CONTACT_NAME")
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_EMAIL).name("CONTACT_EMAIL")
-                .asText()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(NOTIFY_CONTACT_ON_NEXT).name("NOTIFY_CONTACT_ON_NEXT")
-                .asBool()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(NOTIFY_CONTACT_ON_EXCEPTION).name("NOTIFY_CONTACT_ON_EXCEPTION")
-                .asBool()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(LOCATION).name("LOCATION")
-                .asLocation()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(ENTER_DATE).name("ENTER_DATE")
-                .asDateTime()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(MODIFY_DATE).name("MODIFY_DATE")
-                .asDateTime()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(ORDER).name("ORDER")
-                .asInt()
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEMS).name("Pickup Items")
-                .asRelationship(new RelatedServiceConfiguration.Builder("Pickup Items")
-                        .withAttributes(RouteStopPickupItem.getServiceAttributes())
-                        .build())
-                .canCreate()
-                .canUpdate()
-                .build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(ADDRESS).name("ADDRESS")
-                .build());
-
+        attributes.add(new ServiceConfigurationAttribute.Builder(NAME).name("Name").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(STREET_1).name("STREET 1").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(STREET_2).name("STREET 2").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CITY).name("City").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(STATE).name("STATE").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ZIP).name("ZIP").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_NAME).name("CONTACT_NAME").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_EMAIL).name("CONTACT_EMAIL").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(NOTIFY_CONTACT_ON_NEXT).name("NOTIFY_CONTACT_ON_NEXT").asBool().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(NOTIFY_CONTACT_ON_EXCEPTION).name("NOTIFY_CONTACT_ON_EXCEPTION").asBool().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(LOCATION).name("LOCATION").asLocation().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ENTER_DATE).name("ENTER_DATE").asDateTime().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(MODIFY_DATE).name("MODIFY_DATE").asDateTime().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ORDER).name("ORDER").asInt().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ADDRESS).name("ADDRESS").build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_1).name("PICKUP_ITEM_1").asListItem(PickupType.getListAttributes()).canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_1_TYPE).name("PICKUP_ITEM_1_TYPE").asListItem(QuantityType.getListAttributes()).canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_2).name("PICKUP_ITEM_2").asListItem(PickupType.getListAttributes()).canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_2_TYPE).name("PICKUP_ITEM_2_TYPE").asListItem(QuantityType.getListAttributes()).canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_3).name("PICKUP_ITEM_3").asListItem(PickupType.getListAttributes()).canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_3_TYPE).name("PICKUP_ITEM_3_TYPE").asListItem(QuantityType.getListAttributes()).canCreate().canUpdate().build());
         return attributes;
     }
 }

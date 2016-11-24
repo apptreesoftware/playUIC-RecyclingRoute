@@ -3,6 +3,18 @@
 
 # --- !Ups
 
+create table grr_pickup_type (
+  type_id                       serial not null,
+  name                          varchar(255),
+  constraint pk_grr_pickup_type primary key (type_id)
+);
+
+create table grr_pickup_quantity_type (
+  id                            serial not null,
+  quantity_name                 varchar(255),
+  constraint pk_grr_pickup_quantity_type primary key (id)
+);
+
 create table grr_route (
   route_id                      integer not null,
   route_desc                    varchar(255),
@@ -32,20 +44,22 @@ create table grr_route_stop (
   route_stop_lon                float,
   enter_date                    timestamp,
   modify_date                   timestamp,
+  pickup_item_1                 integer,
+  pickup_item_1_measurement     integer,
+  pickup_item_2                 integer,
+  pickup_item_2_measurement     integer,
+  pickup_item_3                 integer,
+  pickup_item_3_measurement     integer,
   route_id                      integer,
+  constraint uq_grr_route_stop_pickup_item_1 unique (pickup_item_1),
+  constraint uq_grr_route_stop_pickup_item_1_measurement unique (pickup_item_1_measurement),
+  constraint uq_grr_route_stop_pickup_item_2 unique (pickup_item_2),
+  constraint uq_grr_route_stop_pickup_item_2_measurement unique (pickup_item_2_measurement),
+  constraint uq_grr_route_stop_pickup_item_3 unique (pickup_item_3),
+  constraint uq_grr_route_stop_pickup_item_3_measurement unique (pickup_item_3_measurement),
   constraint pk_grr_route_stop primary key (route_stop_id)
 );
 create sequence route_stop_id_seq;
-
-create table grr_route_stop_pu_items (
-  pickup_item_id                integer not null,
-  route_stop_id                 integer,
-  pu_item                       varchar(255),
-  enter_date                    timestamp,
-  modify_date                   timestamp,
-  constraint pk_grr_route_stop_pu_items primary key (pickup_item_id)
-);
-create sequence route_pickup_item_seq;
 
 create table grr_vehicle (
   vehicle_id                    integer not null,
@@ -57,29 +71,48 @@ create table grr_vehicle (
 );
 create sequence vehicle_id_seq;
 
+alter table grr_route_stop add constraint fk_grr_route_stop_pickup_item_1 foreign key (pickup_item_1) references grr_pickup_type (type_id) on delete restrict on update restrict;
+
+alter table grr_route_stop add constraint fk_grr_route_stop_pickup_item_1_measurement foreign key (pickup_item_1_measurement) references grr_pickup_quantity_type (id) on delete restrict on update restrict;
+
+alter table grr_route_stop add constraint fk_grr_route_stop_pickup_item_2 foreign key (pickup_item_2) references grr_pickup_type (type_id) on delete restrict on update restrict;
+
+alter table grr_route_stop add constraint fk_grr_route_stop_pickup_item_2_measurement foreign key (pickup_item_2_measurement) references grr_pickup_quantity_type (id) on delete restrict on update restrict;
+
+alter table grr_route_stop add constraint fk_grr_route_stop_pickup_item_3 foreign key (pickup_item_3) references grr_pickup_type (type_id) on delete restrict on update restrict;
+
+alter table grr_route_stop add constraint fk_grr_route_stop_pickup_item_3_measurement foreign key (pickup_item_3_measurement) references grr_pickup_quantity_type (id) on delete restrict on update restrict;
+
 alter table grr_route_stop add constraint fk_grr_route_stop_route_id foreign key (route_id) references grr_route (route_id) on delete restrict on update restrict;
 create index ix_grr_route_stop_route_id on grr_route_stop (route_id);
-
-alter table grr_route_stop_pu_items add constraint fk_grr_route_stop_pu_items_route_stop_id foreign key (route_stop_id) references grr_route_stop (route_stop_id) on delete restrict on update restrict;
-create index ix_grr_route_stop_pu_items_route_stop_id on grr_route_stop_pu_items (route_stop_id);
 
 
 # --- !Downs
 
+alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_pickup_item_1;
+
+alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_pickup_item_1_measurement;
+
+alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_pickup_item_2;
+
+alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_pickup_item_2_measurement;
+
+alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_pickup_item_3;
+
+alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_pickup_item_3_measurement;
+
 alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop_route_id;
 drop index if exists ix_grr_route_stop_route_id;
 
-alter table if exists grr_route_stop_pu_items drop constraint if exists fk_grr_route_stop_pu_items_route_stop_id;
-drop index if exists ix_grr_route_stop_pu_items_route_stop_id;
+drop table if exists grr_pickup_type cascade;
+
+drop table if exists grr_pickup_quantity_type cascade;
 
 drop table if exists grr_route cascade;
 drop sequence if exists route_id_seq;
 
 drop table if exists grr_route_stop cascade;
 drop sequence if exists route_stop_id_seq;
-
-drop table if exists grr_route_stop_pu_items cascade;
-drop sequence if exists route_pickup_item_seq;
 
 drop table if exists grr_vehicle cascade;
 drop sequence if exists vehicle_id_seq;

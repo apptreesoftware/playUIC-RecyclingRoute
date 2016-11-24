@@ -1,4 +1,6 @@
 import com.google.inject.AbstractModule;
+import data.PickupTypeDataSource;
+import data.QuantityTypeDataSource;
 import data.RouteDataSource;
 import data.VehicleDataSource;
 import sdk.AppTree;
@@ -21,6 +23,8 @@ public class Module extends AbstractModule {
 
         AppTree.registerDataSourceWithName("route",new RouteDataSource());
         AppTree.registerDataSourceWithName("vehicles", new VehicleDataSource());
+        AppTree.registerListDataSourceWithName("pickuptypes", new PickupTypeDataSource());
+        AppTree.registerListDataSourceWithName("quantitytypes", new QuantityTypeDataSource());
 
     }
 
