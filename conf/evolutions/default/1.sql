@@ -4,10 +4,11 @@
 # --- !Ups
 
 create table grr_pickup_type (
-  type_id                       serial not null,
+  type_id                       integer not null,
   name                          varchar(255),
   constraint pk_grr_pickup_type primary key (type_id)
 );
+create sequence pickup_type_id_seq;
 
 create table grr_pickup_quantity_type (
   id                            serial not null,
@@ -105,6 +106,7 @@ alter table if exists grr_route_stop drop constraint if exists fk_grr_route_stop
 drop index if exists ix_grr_route_stop_route_id;
 
 drop table if exists grr_pickup_type cascade;
+drop sequence if exists pickup_type_id_seq;
 
 drop table if exists grr_pickup_quantity_type cascade;
 
