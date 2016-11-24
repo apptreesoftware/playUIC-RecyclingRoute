@@ -21,7 +21,7 @@ import java.util.Set;
 public class Route extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "route_id_seq")
-    int routeID;
+    private int routeID;
 
     @Column(name = "route_desc")
     private String description;
@@ -33,7 +33,7 @@ public class Route extends Model {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
     @OrderBy(value = "route_stop_order")
-    List<RouteStop> stops = new ArrayList<>();
+    private List<RouteStop> stops = new ArrayList<>();
 
     public static Model.Finder<Integer, Route> find = new Model.Finder<>(Route.class);
 

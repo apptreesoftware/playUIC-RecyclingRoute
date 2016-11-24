@@ -40,27 +40,27 @@ public class RouteStop extends Model {
 
     @OneToOne
     @JoinColumn(name = "pickup_item_1")
-    PickupType pickupItem1;
+    private PickupType pickupItem1;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_1_measurement")
-    QuantityType pickupItem1QuantityType;
+    private QuantityType pickupItem1QuantityType;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_2")
-    PickupType pickupItem2;
+    private PickupType pickupItem2;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_2_measurement")
-    QuantityType pickupItem2QuantityType;
+    private QuantityType pickupItem2QuantityType;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_3")
-    PickupType pickupItem3;
+    private PickupType pickupItem3;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_3_measurement")
-    QuantityType pickupItem3QuantityType;
+    private QuantityType pickupItem3QuantityType;
 
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "route_id")
@@ -164,7 +164,7 @@ public class RouteStop extends Model {
     private static int PICKUP_ITEM_3 = 20;
     private static int PICKUP_ITEM_3_TYPE = 21;
 
-    public static List<ServiceConfigurationAttribute> getServiceAttributes() {
+    static List<ServiceConfigurationAttribute> getServiceAttributes() {
         List<ServiceConfigurationAttribute> attributes = new ArrayList<>();
         attributes.add(new ServiceConfigurationAttribute.Builder(NAME).name("Name").canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(STREET_1).name("STREET 1").canCreate().canUpdate().build());
