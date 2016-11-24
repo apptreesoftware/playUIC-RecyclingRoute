@@ -44,17 +44,24 @@ public class VehicleDataSource implements DataSource {
 
     @Override
     public RecordActionResponse createRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
-        return updateRecord(dataSetItem, authenticationInfo, params);
+        Vehicle vehicle = new Vehicle();
+        vehicle.copyFrom(dataSetItem);
+        vehicle.insert();
+        DataSetItem responseItem = new DataSetItem(getAttributes());
+        return new RecordActionResponse.Builder()
+                .withMessage("Vehicle Added")
+                .withRecord(vehicle.copyInto(responseItem))
+                .build();
     }
 
     @Override
     public RecordActionResponse updateRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
         Vehicle vehicle = new Vehicle();
         vehicle.copyFrom(dataSetItem);
-        vehicle.save();
+        vehicle.update();
         DataSetItem responseItem = new DataSetItem(getAttributes());
         return new RecordActionResponse.Builder()
-                .withMessage("Submission Successful")
+                .withMessage("Vehicle Updated")
                 .withRecord(vehicle.copyInto(responseItem))
                 .build();
     }
