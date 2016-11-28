@@ -28,6 +28,13 @@ create table grr_route (
 );
 create sequence route_id_seq;
 
+create table grr_route_exceptions (
+  route_action_exception        varchar(255) not null,
+  enter_date                    timestamp,
+  modify_date                   timestamp,
+  constraint pk_grr_route_exceptions primary key (route_action_exception)
+);
+
 create table grr_route_stop (
   route_stop_id                 integer not null,
   route_stop_order              integer,
@@ -112,6 +119,8 @@ drop table if exists grr_pickup_quantity_type cascade;
 
 drop table if exists grr_route cascade;
 drop sequence if exists route_id_seq;
+
+drop table if exists grr_route_exceptions cascade;
 
 drop table if exists grr_route_stop cascade;
 drop sequence if exists route_stop_id_seq;
