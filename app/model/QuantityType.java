@@ -43,4 +43,12 @@ public class QuantityType extends Model {
     }
 
     private static int NAME = 0;
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

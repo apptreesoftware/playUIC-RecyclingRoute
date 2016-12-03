@@ -5,17 +5,21 @@ import sdk.data.DataSet;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
 import sdk.datasources.RecordActionResponse;
+import sdk.datasources.base.CacheableList;
 import sdk.datasources.base.DataSource;
+import sdk.list.List;
+import sdk.list.ListServiceConfigurationAttribute;
 import sdk.utils.AuthenticationInfo;
 import sdk.utils.Parameters;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Created by Matthew Smith on 11/22/16.
  * Copyright AppTree Software, Inc.
  */
-public class VehicleDataSource implements DataSource {
+public class VehicleDataSource implements DataSource, CacheableList {
     @Override
     public String getServiceDescription() {
         return "Vehicles";
@@ -64,5 +68,29 @@ public class VehicleDataSource implements DataSource {
                 .withMessage("Vehicle Updated")
                 .withRecord(vehicle.copyInto(responseItem))
                 .build();
+    }
+
+    @Override
+    public List getList(AuthenticationInfo authenticationInfo, Parameters params) {
+        List list = new List();
+        Vehicle.find.all().forEach(vehicle -> {
+            list.addListItem(vehicle.toListItem());
+        });
+        return list;
+    }
+
+    @Override
+    public boolean isListContentGlobal() {
+        return true;
+    }
+
+    @Override
+    public Set<ListServiceConfigurationAttribute> getListServiceAttributes() {
+        return Vehicle.getListAttributes();
+    }
+
+    @Override
+    public String getServiceName() {
+        return "Vehicle List";
     }
 }

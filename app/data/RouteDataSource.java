@@ -5,16 +5,20 @@ import sdk.data.DataSet;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
 import sdk.datasources.RecordActionResponse;
+import sdk.datasources.base.CacheableList;
 import sdk.datasources.base.DataSource;
+import sdk.list.List;
+import sdk.list.ListServiceConfigurationAttribute;
 import sdk.utils.AuthenticationInfo;
 import sdk.utils.Parameters;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Created by eddie on 11/21/16.
  */
-public class RouteDataSource implements DataSource {
+public class RouteDataSource implements DataSource, CacheableList {
     @Override
     public String getServiceDescription() {
         return "Routes";
@@ -52,5 +56,28 @@ public class RouteDataSource implements DataSource {
                 .withMessage("Submission successful")
                 .withRecord(updatedItem)
                 .build();
+    }
+
+    @Override
+    public List getList(AuthenticationInfo authenticationInfo, Parameters params) {
+        List list = new List();
+        Route.find.all()
+                .forEach(route -> list.addListItem(route.toListItem()));
+        return list;
+    }
+
+    @Override
+    public boolean isListContentGlobal() {
+        return true;
+    }
+
+    @Override
+    public Set<ListServiceConfigurationAttribute> getListServiceAttributes() {
+        return Route.getListServiceAttributes();
+    }
+
+    @Override
+    public String getServiceName() {
+        return "Route List";
     }
 }

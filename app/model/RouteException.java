@@ -31,8 +31,7 @@ public class RouteException extends Model {
     }
 
     public ListItem toListItem() {
-        ListItem listItem = new ListItem(exception);
-        return listItem;
+        return new ListItem(exception);
     }
 
 }

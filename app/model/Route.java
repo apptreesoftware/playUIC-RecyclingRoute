@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 import sdk.data.DataSetItem;
 import sdk.data.RelatedServiceConfiguration;
 import sdk.data.ServiceConfigurationAttribute;
+import sdk.list.ListItem;
+import sdk.list.ListServiceConfigurationAttribute;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -56,6 +58,22 @@ public class Route extends Model {
                 .build()
         );
         return attributes;
+    }
+
+    public static Set<ListServiceConfigurationAttribute> getListServiceAttributes() {
+        HashSet<ListServiceConfigurationAttribute> attributes = new HashSet<>();
+        attributes.add(new ListServiceConfigurationAttribute.Builder(DESCRIPTION).name("Description").build());
+        attributes.add(new ListServiceConfigurationAttribute.Builder(CITY).name("City").build());
+        attributes.add(new ListServiceConfigurationAttribute.Builder(STATE).name("State").build());
+        return attributes;
+    }
+
+    public ListItem toListItem() {
+        ListItem listItem = new ListItem(this.routeID + "");
+        listItem.setStringForAttributeIndex(this.description, DESCRIPTION);
+        listItem.setStringForAttributeIndex(this.city, CITY);
+        listItem.setStringForAttributeIndex(this.state, STATE);
+        return listItem;
     }
 
     public DataSetItem copyInto(DataSetItem dataSetItem) {
@@ -110,6 +128,18 @@ public class Route extends Model {
                 }
             }
         }
+    }
+
+    public int getRouteID() {
+        return routeID;
+    }
+
+    public List<RouteStop> getStops() {
+        return stops;
+    }
+
+    public void setStops(List<RouteStop> stops) {
+        this.stops = stops;
     }
 
     private static int DESCRIPTION = 0;

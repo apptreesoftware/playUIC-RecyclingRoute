@@ -189,4 +189,172 @@ public class RouteStop extends Model {
         attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_3_TYPE).name("PICKUP_ITEM_3_TYPE").asListItem(QuantityType.getListAttributes()).canCreate().canUpdate().build());
         return attributes;
     }
+
+    public int getRouteStopOrder() {
+        return routeStopOrder;
+    }
+
+    public void setRouteStopOrder(int routeStopOrder) {
+        this.routeStopOrder = routeStopOrder;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStreetAddress1() {
+        return streetAddress1;
+    }
+
+    public void setStreetAddress1(String streetAddress1) {
+        this.streetAddress1 = streetAddress1;
+    }
+
+    public String getStreetAddress2() {
+        return streetAddress2;
+    }
+
+    public void setStreetAddress2(String streetAddress2) {
+        this.streetAddress2 = streetAddress2;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public boolean isNotifyContactOnNext() {
+        return notifyContactOnNext;
+    }
+
+    public void setNotifyContactOnNext(boolean notifyContactOnNext) {
+        this.notifyContactOnNext = notifyContactOnNext;
+    }
+
+    public boolean isNotifyContactOnException() {
+        return notifyContactOnException;
+    }
+
+    public void setNotifyContactOnException(boolean notifyContactOnException) {
+        this.notifyContactOnException = notifyContactOnException;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public DateTime getEnterDate() {
+        return enterDate;
+    }
+
+    public void setEnterDate(DateTime enterDate) {
+        this.enterDate = enterDate;
+    }
+
+    public DateTime getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(DateTime modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+
+    public PickupType getPickupItem1() {
+        return pickupItem1;
+    }
+
+    public void setPickupItem1(PickupType pickupItem1) {
+        this.pickupItem1 = pickupItem1;
+    }
+
+    public QuantityType getPickupItem1QuantityType() {
+        return pickupItem1QuantityType;
+    }
+
+    public void setPickupItem1QuantityType(QuantityType pickupItem1QuantityType) {
+        this.pickupItem1QuantityType = pickupItem1QuantityType;
+    }
+
+    public PickupType getPickupItem2() {
+        return pickupItem2;
+    }
+
+    public void setPickupItem2(PickupType pickupItem2) {
+        this.pickupItem2 = pickupItem2;
+    }
+
+    public QuantityType getPickupItem2QuantityType() {
+        return pickupItem2QuantityType;
+    }
+
+    public void setPickupItem2QuantityType(QuantityType pickupItem2QuantityType) {
+        this.pickupItem2QuantityType = pickupItem2QuantityType;
+    }
+
+    public PickupType getPickupItem3() {
+        return pickupItem3;
+    }
+
+    public void setPickupItem3(PickupType pickupItem3) {
+        this.pickupItem3 = pickupItem3;
+    }
+
+    public QuantityType getPickupItem3QuantityType() {
+        return pickupItem3QuantityType;
+    }
+
+    public void setPickupItem3QuantityType(QuantityType pickupItem3QuantityType) {
+        this.pickupItem3QuantityType = pickupItem3QuantityType;
+    }
 }
