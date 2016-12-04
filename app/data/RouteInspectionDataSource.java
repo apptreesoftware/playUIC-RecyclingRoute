@@ -1,10 +1,12 @@
 package data;
 
+import com.avaje.ebean.Ebean;
 import model.*;
 import org.joda.time.DateTime;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
+import sdk.datasources.RecordActionResponse;
 import sdk.datasources.base.InspectionSource;
 import sdk.list.ListItem;
 import sdk.utils.AuthenticationInfo;
@@ -50,23 +52,41 @@ public class RouteInspectionDataSource implements InspectionSource {
         Route route = Route.find.byId(Integer.parseInt(routeListItem.id));
         if ( vehicle == null ) throw new RuntimeException("Vehicle not found");
         if ( route == null ) throw new RuntimeException("Route not found");
-
         RouteCollection routeCollection = newRouteCollectionFromRoute(route, vehicle, authenticationInfo.getUserID());
         DataSet dataSet = newEmptyInspectionDataSet();
-
         routeCollection.getRouteActions().forEach(routeCollectionAction -> routeCollectionAction.copyTo(dataSet.addNewDataSetItem()));
-
         return dataSet;
     }
 
     @Override
     public DataSet completeInspection(DataSet completedDataSet, AuthenticationInfo authenticationInfo, Parameters parameters) {
-        return null;
+        RouteCollection routeCollection = null;
+        Ebean.beginTransaction();
+        for (DataSetItem dataSetItem : completedDataSet.getDataSetItems()) {
+            RouteCollectionAction action = RouteCollectionAction.find.byId(Integer.parseInt(dataSetItem.getPrimaryKey()));
+            if (action == null) continue;
+            if (routeCollection == null) routeCollection = action.getRouteCollection();
+            action.copyFrom(dataSetItem);
+            action.save();
+        }
+        if ( routeCollection == null ) {
+            Ebean.rollbackTransaction();
+            throw new RuntimeException("Collection not found associated with this route action");
+        }
+        routeCollection.setRouteEndTime(DateTime.now());
+        Ebean.commitTransaction();
+        return completedDataSet;
     }
 
     @Override
-    public DataSet updateInspectionItem(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters parameters) {
-        return null;
+    public RecordActionResponse updateInspectionItem(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters parameters) {
+        RouteCollectionAction action = RouteCollectionAction.find.byId(Integer.parseInt(dataSetItem.getPrimaryKey()));
+        if ( action == null ) throw new RuntimeException("Route action not found with ID of " + dataSetItem.getPrimaryKey());
+        action.copyFrom(dataSetItem);
+        action.save();
+        DataSetItem responseDataSetItem = new DataSetItem(getInspectionItemAttributes());
+        action.copyTo(responseDataSetItem);
+        return new RecordActionResponse.Builder().withRecord(responseDataSetItem).build();
     }
 
     @Override

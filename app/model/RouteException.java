@@ -34,4 +34,9 @@ public class RouteException extends Model {
         return new ListItem(exception);
     }
 
+    public RouteException() {}
+    public RouteException(ListItem listItem) {
+        this.exception = listItem.id;
+    }
+
 }

@@ -79,6 +79,7 @@ public class RouteCollectionAction extends Model {
     @JsonIgnore
     private RouteCollection routeCollection;
 
+    public static Model.Finder<Integer, RouteCollectionAction> find = new Model.Finder<>(RouteCollectionAction.class);
 
     public DataSetItem copyTo(DataSetItem dataSetItem) {
         dataSetItem.setPrimaryKey(this.routeActionId + "");
@@ -100,6 +101,29 @@ public class RouteCollectionAction extends Model {
         dataSetItem.setDoubleForAttributeIndex(getPickupItem2Quantity(), PICKUP_QUANTITY_2);
         dataSetItem.setDoubleForAttributeIndex(getPickupItem3Quantity(), PICKUP_QUANTITY_3);
         return dataSetItem;
+    }
+
+    public void copyFrom(DataSetItem dataSetItem) {
+        this.comment = dataSetItem.getStringAttributeAtIndex(COMMENT);
+        dataSetItem.getOptionalLocationAtIndex(LOCATION).ifPresent(location -> {
+            this.latitude = location.getLatitude();
+            this.longitude = location.getLongitude();
+        });
+        this.arrivalTime = dataSetItem.getDateTimeAttributeAtIndex(ARRIVAL_TIME);
+        this.departureTime = dataSetItem.getDateTimeAttributeAtIndex(DEPARTURE_TIME);
+        dataSetItem.getOptionalListItemAttributeAtIndex(ROUTE_EXCEPTION).ifPresent(listItem -> this.routeException = new RouteException(listItem));
+
+        dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_TYPE_1).ifPresent(listItem -> this.pickupItem1 = new PickupType(listItem));
+        dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_QUANTITY_TYPE_1).ifPresent(listItem -> this.pickupItem1QuantityType = new QuantityType(listItem));
+        dataSetItem.getOptionalDoubleAttributeAtIndex(PICKUP_QUANTITY_1).ifPresent(value -> this.pickupItem1Quantity = value.floatValue());
+
+        dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_TYPE_2).ifPresent(listItem -> this.pickupItem2 = new PickupType(listItem));
+        dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_QUANTITY_TYPE_2).ifPresent(listItem -> this.pickupItem2QuantityType = new QuantityType(listItem));
+        dataSetItem.getOptionalDoubleAttributeAtIndex(PICKUP_QUANTITY_2).ifPresent(value -> this.pickupItem2Quantity = value.floatValue());
+
+        dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_TYPE_3).ifPresent(listItem -> this.pickupItem3 = new PickupType(listItem));
+        dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_QUANTITY_TYPE_3).ifPresent(listItem -> this.pickupItem3QuantityType = new QuantityType(listItem));
+        dataSetItem.getOptionalDoubleAttributeAtIndex(PICKUP_QUANTITY_3).ifPresent(value -> this.pickupItem3Quantity = value.floatValue());
     }
 
     public static Collection<ServiceConfigurationAttribute> getServiceAttributes() {
