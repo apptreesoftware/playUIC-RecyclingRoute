@@ -132,7 +132,7 @@ public class RouteStop extends Model {
         }
     }
 
-    private String getAddress() {
+    public String getAddress() {
         String address1 = this.streetAddress1 != null ? this.streetAddress1 : "";
         String address2 = this.streetAddress2 != null ? this.streetAddress2 : "";
         String city = this.city != null ? this.city : "";

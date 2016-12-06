@@ -29,11 +29,13 @@ public class RouteInspectionDataSource implements InspectionSource {
         HashSet<ServiceConfigurationAttribute> attributes = new HashSet<>();
         attributes.add(new ServiceConfigurationAttribute.Builder(SEARCH_ROUTE).name("Route")
                 .asListItem(Route.getListServiceAttributes())
-                .canCreate().canUpdate().build());
+                .canSearchAndRequired()
+                .canUpdateAndRequired()
+                .build());
         attributes.add(new ServiceConfigurationAttribute.Builder(SEARCH_VEHICLE).name("Vehicle")
                 .asListItem(Vehicle.getListAttributes())
-                .canCreate()
-                .canUpdate()
+                .canSearchAndRequired()
+                .canUpdateAndRequired()
                 .build());
 
         return attributes;
@@ -116,6 +118,12 @@ public class RouteInspectionDataSource implements InspectionSource {
             routeAction.setPickupItem3(stop.getPickupItem3());
             routeAction.setPickupItem3QuantityType(stop.getPickupItem3QuantityType());
             routeAction.setRouteOrder(stop.getRouteStopOrder());
+            routeAction.setName(stop.getName());
+            routeAction.setNotifyContactOnException(stop.isNotifyContactOnException());
+            routeAction.setNotifyContactOnNext(stop.isNotifyContactOnNext());
+            routeAction.setContactName(stop.getContactName());
+            routeAction.setContactEmail(stop.getContactEmail());
+            routeAction.setAddress(stop.getAddress());
             routeCollection.getRouteActions().add(routeAction);
         }
         routeCollection.insert();

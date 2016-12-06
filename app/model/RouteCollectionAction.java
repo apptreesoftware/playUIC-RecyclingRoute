@@ -33,6 +33,17 @@ public class RouteCollectionAction extends Model {
     @Column(name = "route_action_lon")
     private double longitude;
 
+    @Column(name = "route_stop_name")
+    private String name;
+
+    private String address;
+
+    private String contactName;
+    private String contactEmail;
+
+    private boolean notifyContactOnNext;
+    private boolean notifyContactOnException;
+
     private DateTime arrivalTime;
     private DateTime departureTime;
 
@@ -52,6 +63,9 @@ public class RouteCollectionAction extends Model {
     @Column(name = "pickup_item_1_quantity")
     private float pickupItem1Quantity;
 
+    @Column(name = "pickup_item_1_weight")
+    int pickupItem1Weight;
+
     @OneToOne
     @JoinColumn(name = "pickup_item_2")
     private PickupType pickupItem2;
@@ -63,6 +77,9 @@ public class RouteCollectionAction extends Model {
     @Column(name = "pickup_item_2_quantity")
     private float pickupItem2Quantity;
 
+    @Column(name = "pickup_item_2_weight")
+    int pickupItem2Weight;
+
     @OneToOne
     @JoinColumn(name = "pickup_item_3")
     private PickupType pickupItem3;
@@ -73,6 +90,9 @@ public class RouteCollectionAction extends Model {
 
     @Column(name = "pickup_item_3_quantity")
     private float pickupItem3Quantity;
+
+    @Column(name = "pickup_item_3_weight")
+    int pickupItem3Weight;
 
     @ManyToOne
     @JoinColumn(name = "route_coll_id", referencedColumnName = "route_coll_id")
@@ -100,6 +120,14 @@ public class RouteCollectionAction extends Model {
         dataSetItem.setDoubleForAttributeIndex(getPickupItem1Quantity(), PICKUP_QUANTITY_1);
         dataSetItem.setDoubleForAttributeIndex(getPickupItem2Quantity(), PICKUP_QUANTITY_2);
         dataSetItem.setDoubleForAttributeIndex(getPickupItem3Quantity(), PICKUP_QUANTITY_3);
+
+        dataSetItem.setIntForAttributeIndex(this.pickupItem1Weight, PICKUP_ITEM_1_WEIGHT);
+        dataSetItem.setIntForAttributeIndex(this.pickupItem2Weight, PICKUP_ITEM_2_WEIGHT);
+        dataSetItem.setIntForAttributeIndex(this.pickupItem3Weight, PICKUP_ITEM_3_WEIGHT);
+        dataSetItem.setStringForAttributeIndex(this.name, NAME);
+        dataSetItem.setStringForAttributeIndex(this.address, ADDRESS);
+        dataSetItem.setStringForAttributeIndex(this.contactName, CONTACT_NAME);
+        dataSetItem.setStringForAttributeIndex(this.contactEmail, CONTACT_EMAIL);
         return dataSetItem;
     }
 
@@ -124,11 +152,15 @@ public class RouteCollectionAction extends Model {
         dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_TYPE_3).ifPresent(listItem -> this.pickupItem3 = new PickupType(listItem));
         dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_QUANTITY_TYPE_3).ifPresent(listItem -> this.pickupItem3QuantityType = new QuantityType(listItem));
         dataSetItem.getOptionalDoubleAttributeAtIndex(PICKUP_QUANTITY_3).ifPresent(value -> this.pickupItem3Quantity = value.floatValue());
+
+        dataSetItem.getOptionalIntAttributeAtIndex(PICKUP_ITEM_1_WEIGHT).ifPresent(value -> this.pickupItem1Weight = value);
+        dataSetItem.getOptionalIntAttributeAtIndex(PICKUP_ITEM_2_WEIGHT).ifPresent(value -> this.pickupItem2Weight = value);
+        dataSetItem.getOptionalIntAttributeAtIndex(PICKUP_ITEM_3_WEIGHT).ifPresent(value -> this.pickupItem3Weight = value);
     }
 
     public static Collection<ServiceConfigurationAttribute> getServiceAttributes() {
         HashSet<ServiceConfigurationAttribute> attributes = new HashSet<>();
-        attributes.add(new ServiceConfigurationAttribute.Builder(ROUTE_ORDER).name("ROUTE_ORDER").asInt().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ROUTE_ORDER).name("ROUTE_ORDER").asInt().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(COMMENT).name("COMMENT").canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(LOCATION).name("LOCATION").asLocation().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(ARRIVAL_TIME).name("ARRIVAL_TIME").asDateTime().canCreate().canUpdate().build());
@@ -143,6 +175,14 @@ public class RouteCollectionAction extends Model {
         attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_QUANTITY_1).name("PICKUP_QUANTITY_1").asDouble().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_QUANTITY_2).name("PICKUP_QUANTITY_2").asDouble().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_QUANTITY_3).name("PICKUP_QUANTITY_3").asDouble().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_1_WEIGHT).name("PICKUP_ITEM_1_WEIGHT").asInt().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_2_WEIGHT).name("PICKUP_ITEM_2_WEIGHT").asInt().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(PICKUP_ITEM_3_WEIGHT).name("PICKUP_ITEM_3_WEIGHT").asInt().canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ADDRESS).name("ADDRESS").build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(NAME).name("NAME").build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_NAME).name("CONTACT_NAME").build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_EMAIL).name("CONTACT_EMAIL").build());
+
         return attributes;
     }
 
@@ -163,6 +203,13 @@ public class RouteCollectionAction extends Model {
     private static int PICKUP_TYPE_3 = 12;
     private static int PICKUP_QUANTITY_TYPE_3 = 13;
     private static int PICKUP_QUANTITY_3 = 14;
+    private static int ADDRESS = 15;
+    private static int PICKUP_ITEM_1_WEIGHT = 16;
+    private static int PICKUP_ITEM_2_WEIGHT = 17;
+    private static int PICKUP_ITEM_3_WEIGHT = 18;
+    private static int NAME = 19;
+    private static int CONTACT_NAME = 20;
+    private static int CONTACT_EMAIL = 21;
 
     public int getRouteOrder() {
         return routeOrder;
@@ -298,5 +345,53 @@ public class RouteCollectionAction extends Model {
 
     public void setRouteCollection(RouteCollection routeCollection) {
         this.routeCollection = routeCollection;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public boolean isNotifyContactOnNext() {
+        return notifyContactOnNext;
+    }
+
+    public void setNotifyContactOnNext(boolean notifyContactOnNext) {
+        this.notifyContactOnNext = notifyContactOnNext;
+    }
+
+    public boolean isNotifyContactOnException() {
+        return notifyContactOnException;
+    }
+
+    public void setNotifyContactOnException(boolean notifyContactOnException) {
+        this.notifyContactOnException = notifyContactOnException;
     }
 }
