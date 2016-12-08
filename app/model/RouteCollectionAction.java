@@ -64,7 +64,7 @@ public class RouteCollectionAction extends Model {
     private float pickupItem1Quantity;
 
     @Column(name = "pickup_item_1_weight")
-    int pickupItem1Weight;
+    private int pickupItem1Weight;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_2")
@@ -78,7 +78,7 @@ public class RouteCollectionAction extends Model {
     private float pickupItem2Quantity;
 
     @Column(name = "pickup_item_2_weight")
-    int pickupItem2Weight;
+    private int pickupItem2Weight;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_3")
@@ -92,7 +92,7 @@ public class RouteCollectionAction extends Model {
     private float pickupItem3Quantity;
 
     @Column(name = "pickup_item_3_weight")
-    int pickupItem3Weight;
+    private int pickupItem3Weight;
 
     @ManyToOne
     @JoinColumn(name = "route_coll_id", referencedColumnName = "route_coll_id")

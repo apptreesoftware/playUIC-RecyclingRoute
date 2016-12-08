@@ -3,8 +3,10 @@ package data;
 import com.avaje.ebean.Ebean;
 import model.*;
 import org.joda.time.DateTime;
+import play.Logger;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
+import sdk.data.InspectionDataSet;
 import sdk.data.ServiceConfigurationAttribute;
 import sdk.datasources.RecordActionResponse;
 import sdk.datasources.base.InspectionSource;
@@ -14,6 +16,7 @@ import sdk.utils.Parameters;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by matthew on 11/28/16.
@@ -61,7 +64,7 @@ public class RouteInspectionDataSource implements InspectionSource {
     }
 
     @Override
-    public DataSet completeInspection(DataSet completedDataSet, AuthenticationInfo authenticationInfo, Parameters parameters) {
+    public DataSet completeInspection(InspectionDataSet completedDataSet, AuthenticationInfo authenticationInfo, Parameters parameters) {
         RouteCollection routeCollection = null;
         Ebean.beginTransaction();
         for (DataSetItem dataSetItem : completedDataSet.getDataSetItems()) {
@@ -69,13 +72,14 @@ public class RouteInspectionDataSource implements InspectionSource {
             if (action == null) continue;
             if (routeCollection == null) routeCollection = action.getRouteCollection();
             action.copyFrom(dataSetItem);
-            action.save();
+            action.update();
         }
         if ( routeCollection == null ) {
             Ebean.rollbackTransaction();
             throw new RuntimeException("Collection not found associated with this route action");
         }
-        routeCollection.setRouteEndTime(DateTime.now());
+        routeCollection.setRouteEndTime(completedDataSet.getEndDate());
+        routeCollection.update();
         Ebean.commitTransaction();
         return completedDataSet;
     }
@@ -88,7 +92,30 @@ public class RouteInspectionDataSource implements InspectionSource {
         action.save();
         DataSetItem responseDataSetItem = new DataSetItem(getInspectionItemAttributes());
         action.copyTo(responseDataSetItem);
+
+        if ( action.getRouteException() != null && action.isNotifyContactOnException() && action.getContactEmail() != null ) {
+            //Notify of exception
+            Logger.debug("Send email about exception");
+        }
+        if ( action.isNotifyContactOnNext() ) {
+            RouteCollectionAction nextAction = getNextRouteActionAfter(action);
+            if ( nextAction != null && nextAction.getContactEmail() != null ) {
+                Logger.debug("Send email about next stop");
+            }
+        }
+
         return new RecordActionResponse.Builder().withRecord(responseDataSetItem).build();
+    }
+
+    private RouteCollectionAction getNextRouteActionAfter(RouteCollectionAction action) {
+        RouteCollection collection = action.getRouteCollection();
+        List<RouteCollectionAction> actions = collection.getRouteActions();
+        int index = actions.indexOf(action);
+        index++;
+        if ( index < actions.size() ) {
+            return actions.get(index);
+        }
+        return null;
     }
 
     @Override
@@ -107,6 +134,7 @@ public class RouteInspectionDataSource implements InspectionSource {
         routeCollection.setUser(username);
         routeCollection.setRouteId(route.getRouteID());
 
+        int index = 0;
         for (RouteStop stop : route.getStops()) {
             RouteCollectionAction routeAction = new RouteCollectionAction();
             routeAction.setLatitude(stop.getLatitude());
@@ -117,7 +145,7 @@ public class RouteInspectionDataSource implements InspectionSource {
             routeAction.setPickupItem2QuantityType(stop.getPickupItem2QuantityType());
             routeAction.setPickupItem3(stop.getPickupItem3());
             routeAction.setPickupItem3QuantityType(stop.getPickupItem3QuantityType());
-            routeAction.setRouteOrder(stop.getRouteStopOrder());
+            routeAction.setRouteOrder(index);
             routeAction.setName(stop.getName());
             routeAction.setNotifyContactOnException(stop.isNotifyContactOnException());
             routeAction.setNotifyContactOnNext(stop.isNotifyContactOnNext());
@@ -125,6 +153,7 @@ public class RouteInspectionDataSource implements InspectionSource {
             routeAction.setContactEmail(stop.getContactEmail());
             routeAction.setAddress(stop.getAddress());
             routeCollection.getRouteActions().add(routeAction);
+            index++;
         }
         routeCollection.insert();
         return routeCollection;

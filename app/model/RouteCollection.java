@@ -29,6 +29,7 @@ public class RouteCollection extends Model {
     private Vehicle vehicle;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "routeCollection")
+    @OrderBy(value = "routeOrder")
     private List<RouteCollectionAction> routeActions = new ArrayList<>();
 
     private int routeId;
