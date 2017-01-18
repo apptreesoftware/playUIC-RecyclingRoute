@@ -37,7 +37,7 @@ public class RouteStop extends Model {
     private double longitude;
     private DateTime enterDate;
     private DateTime modifyDate;
-    private String contact_phone;
+    private String contactPhone;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_1")
@@ -79,7 +79,7 @@ public class RouteStop extends Model {
         dataSetItem.setStringForAttributeIndex(this.zip, ZIP);
         dataSetItem.setStringForAttributeIndex(this.contactName, CONTACT_NAME);
         dataSetItem.setStringForAttributeIndex(this.contactEmail, CONTACT_EMAIL);
-        dataSetItem.setStringForAttributeIndex(this.contact_phone, CONTACT_PHONE);
+        dataSetItem.setStringForAttributeIndex(this.contactPhone, CONTACT_PHONE);
         dataSetItem.setBooleanForAttributeIndex(this.notifyContactOnNext, NOTIFY_CONTACT_ON_NEXT);
         dataSetItem.setBooleanForAttributeIndex(this.notifyContactOnException, NOTIFY_CONTACT_ON_EXCEPTION);
         dataSetItem.setLocationForAttributeIndex(new Location(this.latitude, this.longitude), LOCATION);
@@ -106,7 +106,7 @@ public class RouteStop extends Model {
             this.zip = dataSetItem.getStringAttributeAtIndex(ZIP);
             this.contactName = dataSetItem.getStringAttributeAtIndex(CONTACT_NAME);
             this.contactEmail = dataSetItem.getStringAttributeAtIndex(CONTACT_EMAIL);
-            this.contact_phone = dataSetItem.getStringAttributeAtIndex(CONTACT_PHONE);
+            this.contactPhone = dataSetItem.getStringAttributeAtIndex(CONTACT_PHONE);
             this.notifyContactOnException = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_EXCEPTION);
             this.notifyContactOnNext = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_NEXT);
             dataSetItem.getOptionalLocationAtIndex(LOCATION)
@@ -363,12 +363,12 @@ public class RouteStop extends Model {
         this.pickupItem3QuantityType = pickupItem3QuantityType;
     }
 
-    public String getContact_phone() {
-        return contact_phone;
+    public String getContactPhone() {
+        return contactPhone;
     }
 
-    public void setContact_phone(String contact_phone) {
-        this.contact_phone = contact_phone;
+    public void setContactPhone(String contact_phone) {
+        this.contactPhone = contact_phone;
     }
 
     public Route getRoute() {
