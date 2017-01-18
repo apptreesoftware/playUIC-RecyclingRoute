@@ -37,6 +37,7 @@ public class RouteStop extends Model {
     private double longitude;
     private DateTime enterDate;
     private DateTime modifyDate;
+    @Column(name = "contact_phone")
     private String contactPhone;
 
     @OneToOne
