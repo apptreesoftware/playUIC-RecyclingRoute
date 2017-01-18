@@ -21,6 +21,7 @@ public class Module extends AbstractModule {
         AppTree.registerDataSourceWithName("vehicles", new VehicleDataSource());
         AppTree.registerListDataSourceWithName("pickuptypes", new PickupTypeDataSource());
         AppTree.registerListDataSourceWithName("quantitytypes", new QuantityTypeDataSource());
+        AppTree.registerDataSourceWithName("Quantity", new QuantityTypeDataSource());
         AppTree.registerDataSourceWithName("types", new PickupTypeDataSource());
         AppTree.registerListDataSourceWithName("routeexceptions", new RouteExceptionDataSource());
         AppTree.registerListDataSourceWithName("routeslist" , new RouteDataSource());
