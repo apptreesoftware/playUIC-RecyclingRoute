@@ -2,9 +2,6 @@ package data;
 
 import com.avaje.ebean.Ebean;
 import model.Route;
-import model.RouteStop;
-import org.joda.time.DateTime;
-import play.Logger;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
@@ -12,13 +9,11 @@ import sdk.datasources.RecordActionResponse;
 import sdk.datasources.base.CacheableList;
 import sdk.datasources.base.DataSource;
 import sdk.list.List;
-import sdk.list.ListItem;
 import sdk.list.ListServiceConfigurationAttribute;
 import sdk.utils.AuthenticationInfo;
 import sdk.utils.Parameters;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 
 /**
