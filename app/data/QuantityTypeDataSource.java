@@ -59,14 +59,14 @@ public class QuantityTypeDataSource implements CacheableList, DataSource {
     @Override
     public DataSetItem getRecord(String id, AuthenticationInfo authenticationInfo, Parameters parameters) {
         QuantityType quantityType = QuantityType.find.byId(Integer.parseInt(id));
-        if (quantityType == null) throw new RuntimeException("Pickup Type not found");
+        if (quantityType == null) throw new RuntimeException("Quantity Type not found");
         return quantityType.copyTo(new DataSetItem(getAttributes()));
     }
 
     @Override
     public RecordActionResponse updateRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
         QuantityType quantityType = QuantityType.find.byId(Integer.parseInt(dataSetItem.getPrimaryKey()));
-        if (quantityType == null) throw new RuntimeException("Pickup Type not found");
+        if (quantityType == null) throw new RuntimeException("Quantity Type not found");
         quantityType.copyFrom(dataSetItem);
         DataSetItem updateItem = new DataSetItem(getAttributes());
         quantityType.copyTo(updateItem);
