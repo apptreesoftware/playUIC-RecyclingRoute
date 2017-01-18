@@ -39,12 +39,13 @@ public class Route extends Model {
 
     public static Model.Finder<Integer, Route> find = new Model.Finder<>(Route.class);
 
+
     public static Set<ServiceConfigurationAttribute> getServiceAttributes() {
         HashSet<ServiceConfigurationAttribute> attributes = new HashSet<>();
-        attributes.add(new ServiceConfigurationAttribute.Builder(DESCRIPTION).name("Description").asText().canCreate().canUpdate().build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(CITY).name("CITY").canCreate().canUpdate().build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(STATE).name("STATE").canCreate().canUpdate().build());
-        attributes.add(new ServiceConfigurationAttribute.Builder(ZIP).name("ZIP").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(DESCRIPTION).name("Description").asText().canCreateAndRequired().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CITY).name("CITY").canCreateAndRequired().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(STATE).name("STATE").canCreateAndRequired().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(ZIP).name("ZIP").canCreateAndRequired().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(ENTER_DATE).name("ENTER_DATE").asDateTime().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(MODIFY_DATE).name("MODIFY_DATE").asDateTime().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(STOPS)
@@ -119,7 +120,7 @@ public class Route extends Model {
                 RouteStop routeStop = new RouteStop();
                 switch (stop.getCRUDStatus()) {
                     case Create:
-                        routeStop.route = this;
+                        routeStop.setRoute(this);
                         routeStop.copyFrom(stop);
                         break;
                     case Update:
@@ -146,7 +147,7 @@ public class Route extends Model {
     private static int CITY = 1;
     private static int STATE = 2;
     private static int ZIP = 3;
-    private static int ENTER_DATE = 4;
+    public static int ENTER_DATE = 4;
     private static int MODIFY_DATE = 5;
-    private static int STOPS = 6;
+    public static int STOPS = 6;
 }
