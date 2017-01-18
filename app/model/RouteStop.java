@@ -65,7 +65,7 @@ public class RouteStop extends Model {
 
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "route_id")
-    Route route;
+    private Route route;
 
     public static Model.Finder<Integer, RouteStop> find = new Model.Finder<>(RouteStop.class);
 
@@ -96,7 +96,7 @@ public class RouteStop extends Model {
         return dataSetItem;
     }
 
-    void copyFrom(DataSetItem dataSetItem) {
+    public void copyFrom(DataSetItem dataSetItem) {
         if (dataSetItem.getCRUDStatus() != DataSetItem.CRUDStatus.Read) {
             this.name = dataSetItem.getStringAttributeAtIndex(NAME);
             this.streetAddress1 = dataSetItem.getStringAttributeAtIndex(STREET_1);
@@ -369,5 +369,13 @@ public class RouteStop extends Model {
 
     public void setContact_phone(String contact_phone) {
         this.contact_phone = contact_phone;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }

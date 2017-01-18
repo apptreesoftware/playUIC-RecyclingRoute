@@ -1,6 +1,10 @@
 package data;
 
+import com.avaje.ebean.Ebean;
 import model.Route;
+import model.RouteStop;
+import org.joda.time.DateTime;
+import play.Logger;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
@@ -8,11 +12,13 @@ import sdk.datasources.RecordActionResponse;
 import sdk.datasources.base.CacheableList;
 import sdk.datasources.base.DataSource;
 import sdk.list.List;
+import sdk.list.ListItem;
 import sdk.list.ListServiceConfigurationAttribute;
 import sdk.utils.AuthenticationInfo;
 import sdk.utils.Parameters;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -57,6 +63,15 @@ public class RouteDataSource implements DataSource, CacheableList {
                 .withRecord(updatedItem)
                 .build();
     }
+
+
+    @Override
+        public RecordActionResponse createRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
+            Route route = new Route();
+            route.copyFrom(dataSetItem);
+            Ebean.save(route);
+            return new RecordActionResponse.Builder().withMessage("Route successfully created.").withRecord(dataSetItem).build();
+        }
 
     @Override
     public List getList(AuthenticationInfo authenticationInfo, Parameters params) {
