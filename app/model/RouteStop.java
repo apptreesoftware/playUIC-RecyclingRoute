@@ -37,6 +37,7 @@ public class RouteStop extends Model {
     private double longitude;
     private DateTime enterDate;
     private DateTime modifyDate;
+    private String contact_phone;
 
     @OneToOne
     @JoinColumn(name = "pickup_item_1")
@@ -78,6 +79,7 @@ public class RouteStop extends Model {
         dataSetItem.setStringForAttributeIndex(this.zip, ZIP);
         dataSetItem.setStringForAttributeIndex(this.contactName, CONTACT_NAME);
         dataSetItem.setStringForAttributeIndex(this.contactEmail, CONTACT_EMAIL);
+        dataSetItem.setStringForAttributeIndex(this.contact_phone, CONTACT_PHONE);
         dataSetItem.setBooleanForAttributeIndex(this.notifyContactOnNext, NOTIFY_CONTACT_ON_NEXT);
         dataSetItem.setBooleanForAttributeIndex(this.notifyContactOnException, NOTIFY_CONTACT_ON_EXCEPTION);
         dataSetItem.setLocationForAttributeIndex(new Location(this.latitude, this.longitude), LOCATION);
@@ -104,6 +106,7 @@ public class RouteStop extends Model {
             this.zip = dataSetItem.getStringAttributeAtIndex(ZIP);
             this.contactName = dataSetItem.getStringAttributeAtIndex(CONTACT_NAME);
             this.contactEmail = dataSetItem.getStringAttributeAtIndex(CONTACT_EMAIL);
+            this.contact_phone = dataSetItem.getStringAttributeAtIndex(CONTACT_PHONE);
             this.notifyContactOnException = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_EXCEPTION);
             this.notifyContactOnNext = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_NEXT);
             dataSetItem.getOptionalLocationAtIndex(LOCATION)
@@ -146,7 +149,7 @@ public class RouteStop extends Model {
     private static int STREET_1 = 1;
     private static int STREET_2 = 2;
     private static int CITY = 3;
-    private static int STATE = 4;
+    public static int STATE = 4;
     private static int ZIP = 5;
     private static int CONTACT_NAME = 6;
     private static int CONTACT_EMAIL = 7;
@@ -163,6 +166,7 @@ public class RouteStop extends Model {
     private static int PICKUP_ITEM_2_TYPE = 19;
     private static int PICKUP_ITEM_3 = 20;
     private static int PICKUP_ITEM_3_TYPE = 21;
+    private static int CONTACT_PHONE = 22;
 
     static List<ServiceConfigurationAttribute> getServiceAttributes() {
         List<ServiceConfigurationAttribute> attributes = new ArrayList<>();
@@ -174,6 +178,7 @@ public class RouteStop extends Model {
         attributes.add(new ServiceConfigurationAttribute.Builder(ZIP).name("ZIP").canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_NAME).name("CONTACT_NAME").canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_EMAIL).name("CONTACT_EMAIL").canCreate().canUpdate().build());
+        attributes.add(new ServiceConfigurationAttribute.Builder(CONTACT_PHONE).name("CONTACT_PHONE").canCreate().canUpdate().canSearch().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(NOTIFY_CONTACT_ON_NEXT).name("NOTIFY_CONTACT_ON_NEXT").asBool().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(NOTIFY_CONTACT_ON_EXCEPTION).name("NOTIFY_CONTACT_ON_EXCEPTION").asBool().canCreate().canUpdate().build());
         attributes.add(new ServiceConfigurationAttribute.Builder(LOCATION).name("LOCATION").asLocation().canCreate().canUpdate().build());
@@ -356,5 +361,13 @@ public class RouteStop extends Model {
 
     public void setPickupItem3QuantityType(QuantityType pickupItem3QuantityType) {
         this.pickupItem3QuantityType = pickupItem3QuantityType;
+    }
+
+    public String getContact_phone() {
+        return contact_phone;
+    }
+
+    public void setContact_phone(String contact_phone) {
+        this.contact_phone = contact_phone;
     }
 }
