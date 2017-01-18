@@ -367,8 +367,8 @@ public class RouteStop extends Model {
         return contactPhone;
     }
 
-    public void setContactPhone(String contact_phone) {
-        this.contactPhone = contact_phone;
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
     }
 
     public Route getRoute() {
