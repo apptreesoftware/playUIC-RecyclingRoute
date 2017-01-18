@@ -1,6 +1,5 @@
 package data;
 
-import com.avaje.ebean.Ebean;
 import model.Route;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
