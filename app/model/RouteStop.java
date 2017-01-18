@@ -96,7 +96,7 @@ public class RouteStop extends Model {
         return dataSetItem;
     }
 
-    public void copyFrom(DataSetItem dataSetItem) {
+    void copyFrom(DataSetItem dataSetItem) {
         if (dataSetItem.getCRUDStatus() != DataSetItem.CRUDStatus.Read) {
             this.name = dataSetItem.getStringAttributeAtIndex(NAME);
             this.streetAddress1 = dataSetItem.getStringAttributeAtIndex(STREET_1);
