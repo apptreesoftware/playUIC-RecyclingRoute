@@ -14,9 +14,7 @@ import sdk.list.ListItem;
 import sdk.utils.AuthenticationInfo;
 import sdk.utils.Parameters;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by matthew on 11/28/16.
@@ -50,7 +48,7 @@ public class RouteInspectionDataSource implements InspectionSource {
     }
 
     @Override
-    public DataSet startInspection(DataSetItem inspectionSearchDataSetItem, AuthenticationInfo authenticationInfo, Parameters parameters) {
+    public InspectionDataSet startInspection(DataSetItem inspectionSearchDataSetItem, AuthenticationInfo authenticationInfo, Parameters parameters) {
         ListItem vehicleListItem = inspectionSearchDataSetItem.getOptionalListItemAttributeAtIndex(SEARCH_VEHICLE).orElseThrow(() -> new RuntimeException("No vehicle provided"));
         ListItem routeListItem = inspectionSearchDataSetItem.getOptionalListItemAttributeAtIndex(SEARCH_ROUTE).orElseThrow(() -> new RuntimeException("No route provided"));
         Vehicle vehicle = Vehicle.find.byId(Integer.parseInt(vehicleListItem.id));
@@ -58,9 +56,19 @@ public class RouteInspectionDataSource implements InspectionSource {
         if ( vehicle == null ) throw new RuntimeException("Vehicle not found");
         if ( route == null ) throw new RuntimeException("Route not found");
         RouteCollection routeCollection = newRouteCollectionFromRoute(route, vehicle, authenticationInfo.getUserID());
-        DataSet dataSet = newEmptyInspectionDataSet();
+        InspectionDataSet dataSet = newEmptyInspectionDataSet();
+        dataSet.setContextValue("Vehicle", vehicle.getId() + "");
+        dataSet.setContextValue("Route", route.getRouteID() + "");
         routeCollection.getRouteActions().forEach(routeCollectionAction -> routeCollectionAction.copyTo(dataSet.addNewDataSetItem()));
         return dataSet;
+    }
+
+    @Override
+    public DataSetItem searchForInspectionItem(String primaryKey, Map<String, String> inspectionContext, AuthenticationInfo authenticationInfo, Parameters parameters) {
+        DataSetItem dataSetItem = new DataSetItem(getInspectionItemAttributes());
+        dataSetItem.setPrimaryKey(UUID.randomUUID().toString());
+        dataSetItem.setStringForAttributeIndex("TEST ITEM", 1);
+        return dataSetItem;
     }
 
     @Override
@@ -85,7 +93,7 @@ public class RouteInspectionDataSource implements InspectionSource {
     }
 
     @Override
-    public RecordActionResponse updateInspectionItem(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters parameters) {
+    public RecordActionResponse updateInspectionItem(DataSetItem dataSetItem,Map<String, String> inspectionContext, AuthenticationInfo authenticationInfo, Parameters parameters) {
         RouteCollectionAction action = RouteCollectionAction.find.byId(Integer.parseInt(dataSetItem.getPrimaryKey()));
         if ( action == null ) throw new RuntimeException("Route action not found with ID of " + dataSetItem.getPrimaryKey());
         action.copyFrom(dataSetItem);

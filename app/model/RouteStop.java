@@ -66,7 +66,7 @@ public class RouteStop extends Model {
 
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "route_id")
-    Route route;
+    private Route route;
 
     public static Model.Finder<Integer, RouteStop> find = new Model.Finder<>(RouteStop.class);
 
@@ -370,5 +370,13 @@ public class RouteStop extends Model {
 
     public void setContactPhone(String contactPhone) {
         this.contactPhone = contactPhone;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }

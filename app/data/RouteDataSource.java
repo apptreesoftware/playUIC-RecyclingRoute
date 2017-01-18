@@ -58,6 +58,19 @@ public class RouteDataSource implements DataSource, CacheableList {
                 .build();
     }
 
+
+    @Override
+        public RecordActionResponse createRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
+            Route route = new Route();
+            route.copyFrom(dataSetItem);
+            DataSetItem createdItem = new DataSetItem(getAttributes());
+            route.copyInto(createdItem);
+            return new RecordActionResponse.Builder()
+                    .withMessage("Route successfully created.")
+                    .withRecord(createdItem)
+                    .build();
+        }
+
     @Override
     public List getList(AuthenticationInfo authenticationInfo, Parameters params) {
         List list = new List();
