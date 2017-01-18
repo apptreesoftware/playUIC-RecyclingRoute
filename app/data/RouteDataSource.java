@@ -65,7 +65,10 @@ public class RouteDataSource implements DataSource, CacheableList {
             Route route = new Route();
             route.copyFrom(dataSetItem);
             Ebean.save(route);
-            return new RecordActionResponse.Builder().withMessage("Route successfully created.").withRecord(dataSetItem).build();
+            return new RecordActionResponse.Builder()
+                    .withMessage("Route successfully created.")
+                    .withRecord(dataSetItem)
+                    .build();
         }
 
     @Override
