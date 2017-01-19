@@ -126,6 +126,9 @@ public class Route extends Model {
                     case Update:
                         routeStop.copyFrom(stop);
                         break;
+                    case Delete:
+                        routeStop.copyFrom(stop);
+                        break;
                 }
             }
         }

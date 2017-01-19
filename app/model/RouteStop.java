@@ -99,6 +99,7 @@ public class RouteStop extends Model {
 
     void copyFrom(DataSetItem dataSetItem) {
         if (dataSetItem.getCRUDStatus() != DataSetItem.CRUDStatus.Read) {
+            this.routeStopId = Integer.parseInt( dataSetItem.getPrimaryKey() );
             this.name = dataSetItem.getStringAttributeAtIndex(NAME);
             this.streetAddress1 = dataSetItem.getStringAttributeAtIndex(STREET_1);
             this.streetAddress2 = dataSetItem.getStringAttributeAtIndex(STREET_2);
@@ -112,9 +113,10 @@ public class RouteStop extends Model {
             this.notifyContactOnNext = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_NEXT);
             dataSetItem.getOptionalLocationAtIndex(LOCATION)
                     .ifPresent(location -> {
-                        this.latitude = location.getLatitude();
-                        this.longitude = location.getLongitude();
-                    });
+                this.longitude = location.getLongitude();
+                this.latitude = location.getLatitude();
+            });
+
             this.enterDate = this.enterDate != null ? this.enterDate : DateTime.now();
             this.modifyDate = DateTime.now();
             this.routeStopOrder = dataSetItem.getIntAttributeAtIndex(ORDER);
@@ -132,6 +134,9 @@ public class RouteStop extends Model {
             case Update:
                 this.routeStopId = Integer.parseInt(dataSetItem.getPrimaryKey());
                 this.update();
+                break;
+            case Delete:
+                this.delete();
                 break;
         }
     }
