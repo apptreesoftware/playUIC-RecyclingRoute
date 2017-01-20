@@ -35,7 +35,7 @@ public class LocationManager {
             subscriber.onStart();
             request.get().thenAccept(response -> {
                 GoogleGeocodeResponse googleResponse = Json.fromJson(response.asJson(), GoogleGeocodeResponse.class);
-                GoogleGeocode.Location location = googleResponse.getResults()[0].getGeometry().getLocation();
+                GoogleGeocode.Location location = googleResponse.getResults()[0].geometry.location;
                 subscriber.onNext(location);
                 subscriber.onCompleted();
             });

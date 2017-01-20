@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Geometry
 {
-    private Viewport viewport;
+    public Viewport viewport;
 
     @JsonProperty("location_type")
     public String locationType;
 
-    private Location location;
+    public Location location;
 
 
     @Override
