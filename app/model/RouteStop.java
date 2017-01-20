@@ -1,6 +1,7 @@
 package model;
 
 import com.avaje.ebean.Model;
+import com.google.inject.Inject;
 import org.joda.time.DateTime;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
@@ -9,6 +10,7 @@ import sdk.models.Location;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by eddie on 11/21/16.
@@ -16,6 +18,9 @@ import java.util.List;
 @Entity
 @Table(name = "grr_route_stop")
 public class RouteStop extends Model {
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "route_stop_id_seq")
     private int routeStopId;
@@ -110,12 +115,6 @@ public class RouteStop extends Model {
             this.contactPhone = dataSetItem.getStringAttributeAtIndex(CONTACT_PHONE);
             this.notifyContactOnException = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_EXCEPTION);
             this.notifyContactOnNext = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_NEXT);
-            dataSetItem.getOptionalLocationAtIndex(LOCATION)
-                    .ifPresent(location -> {
-                this.longitude = location.getLongitude();
-                this.latitude = location.getLatitude();
-            });
-
             this.enterDate = this.enterDate != null ? this.enterDate : DateTime.now();
             this.modifyDate = DateTime.now();
             this.routeStopOrder = dataSetItem.getIntAttributeAtIndex(ORDER);
@@ -303,6 +302,10 @@ public class RouteStop extends Model {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public boolean hasValidLocation() {
+        return getLongitude() != 0 && getLatitude() != 0;
     }
 
     public DateTime getEnterDate() {

@@ -130,6 +130,7 @@ public class Route extends Model {
                         routeStop.copyFrom(stop);
                         break;
                 }
+                this.getStops().add(routeStop);
             }
         }
     }

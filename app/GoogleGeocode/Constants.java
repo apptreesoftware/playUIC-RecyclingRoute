@@ -1,4 +1,4 @@
-package util;
+package GoogleGeocode;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
