@@ -59,14 +59,13 @@ public class RouteDataSource implements DataSource, CacheableList {
                 .flatMap(route1 -> Observable.from(route1.getStops()))
                 .flatMap(routeStop -> {
                     if (routeStop.hasValidLocation()) {
-
                         return Observable.just(routeStop);
                     } else {
                         return hydrateLocationForRouteStop(routeStop)
                                 .doOnNext(location -> {
                                     if (location != null ) {
-                                        routeStop.setLatitude(location.getLat());
-                                        routeStop.setLongitude(location.getLng());
+                                        routeStop.setLatitude(location.lattitude);
+                                        routeStop.setLongitude(location.longitude);
                                         routeStop.update();
                                     }
                                 })
@@ -82,7 +81,7 @@ public class RouteDataSource implements DataSource, CacheableList {
                     return createdItem;
                 })
                 .map(createdItem -> new RecordActionResponse.Builder()
-                        .withMessage("Route successfully created.")
+                        .withMessage("Route successfully updated.")
                         .withRecord(createdItem)
                         .build());
     }
@@ -92,19 +91,17 @@ public class RouteDataSource implements DataSource, CacheableList {
         public Observable<RecordActionResponse> createRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
             Route route = new Route();
             route.copyFrom(dataSetItem);
-            Logger.debug("Starting create");
             return Observable.just(route)
                     .flatMap(route1 -> Observable.from(route1.getStops()))
                     .flatMap(routeStop -> {
                         if (routeStop.hasValidLocation()) {
                             return Observable.just(routeStop);
                         } else {
-                            Logger.debug("Doesnt have valid location");
                             return hydrateLocationForRouteStop(routeStop)
                                     .doOnNext(location -> {
                                         if (location != null ) {
-                                            routeStop.setLatitude(location.getLat());
-                                            routeStop.setLongitude(location.getLng());
+                                            routeStop.setLatitude(location.lattitude);
+                                            routeStop.setLongitude(location.longitude);
                                             routeStop.update();
                                         }
                                     })

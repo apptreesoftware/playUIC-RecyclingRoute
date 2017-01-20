@@ -116,6 +116,11 @@ public class RouteStop extends Model {
             this.enterDate = this.enterDate != null ? this.enterDate : DateTime.now();
             this.modifyDate = DateTime.now();
             this.routeStopOrder = dataSetItem.getIntAttributeAtIndex(ORDER);
+            dataSetItem.getOptionalLocationAtIndex(LOCATION)
+                    .ifPresent(location ->{
+                        this.latitude = location.getLatitude();
+                        this.longitude = location.getLongitude();
+                    });
             dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_1).ifPresent(listItem -> this.pickupItem1 = new PickupType(listItem));
             dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_2).ifPresent(listItem -> this.pickupItem2 = new PickupType(listItem));
             dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_3).ifPresent(listItem -> this.pickupItem3 = new PickupType(listItem));

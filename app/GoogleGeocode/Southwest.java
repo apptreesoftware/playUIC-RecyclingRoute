@@ -1,37 +1,21 @@
 package GoogleGeocode;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Orozco on 1/19/17.
  */
 public class Southwest
 {
-    private String lng;
+    @JsonProperty("lng")
+    public String longitude;
 
-    private String lat;
-
-    public String getLng ()
-    {
-        return lng;
-    }
-
-    public void setLng (String lng)
-    {
-        this.lng = lng;
-    }
-
-    public String getLat ()
-    {
-        return lat;
-    }
-
-    public void setLat (String lat)
-    {
-        this.lat = lat;
-    }
+    @JsonProperty("lat")
+    public String lattitude;
 
     @Override
     public String toString()
     {
-        return "ClassPojo [lng = "+lng+", lat = "+lat+"]";
+        return "ClassPojo [lng = "+longitude+", lat = "+lattitude+"]";
     }
 }

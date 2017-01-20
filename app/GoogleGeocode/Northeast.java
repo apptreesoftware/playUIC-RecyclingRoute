@@ -1,37 +1,22 @@
 package GoogleGeocode;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Orozco on 1/19/17.
  */
 public class Northeast
 {
-    private String lng;
+    @JsonProperty("lng")
+    public String longitude;
 
-    private String lat;
+    @JsonProperty("lat")
+    public String lattitude;
 
-    public String getLng ()
-    {
-        return lng;
-    }
-
-    public void setLng (String lng)
-    {
-        this.lng = lng;
-    }
-
-    public String getLat ()
-    {
-        return lat;
-    }
-
-    public void setLat (String lat)
-    {
-        this.lat = lat;
-    }
 
     @Override
     public String toString()
     {
-        return "ClassPojo [lng = "+lng+", lat = "+lat+"]";
+        return "ClassPojo [longitude = "+longitude+", lattitude = "+lattitude+"]";
     }
 }

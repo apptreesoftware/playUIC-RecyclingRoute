@@ -1,85 +1,31 @@
 package GoogleGeocode;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Orozco on 1/19/17.
  */
 public class Results
 {
-    private String partial_match;
+    @JsonProperty("partial_match")
+    public String partialMatch;
 
-    private String place_id;
+    @JsonProperty("place_id")
+    public String placeID;
 
-    private Address_components[] address_components;
+    @JsonProperty("address_components")
+    public Address_components[] addressComponents;
 
-    private String formatted_address;
+    @JsonProperty("formatted_address")
+    public String formattedAddress;
 
-    private String[] types;
+    public String[] types;
 
-    private Geometry geometry;
-
-    public String getPartial_match ()
-    {
-        return partial_match;
-    }
-
-    public void setPartial_match (String partial_match)
-    {
-        this.partial_match = partial_match;
-    }
-
-    public String getPlace_id ()
-    {
-        return place_id;
-    }
-
-    public void setPlace_id (String place_id)
-    {
-        this.place_id = place_id;
-    }
-
-    public Address_components[] getAddress_components ()
-    {
-        return address_components;
-    }
-
-    public void setAddress_components (Address_components[] address_components)
-    {
-        this.address_components = address_components;
-    }
-
-    public String getFormatted_address ()
-    {
-        return formatted_address;
-    }
-
-    public void setFormatted_address (String formatted_address)
-    {
-        this.formatted_address = formatted_address;
-    }
-
-    public String[] getTypes ()
-    {
-        return types;
-    }
-
-    public void setTypes (String[] types)
-    {
-        this.types = types;
-    }
-
-    public Geometry getGeometry ()
-    {
-        return geometry;
-    }
-
-    public void setGeometry (Geometry geometry)
-    {
-        this.geometry = geometry;
-    }
+    public Geometry geometry;
 
     @Override
     public String toString()
     {
-        return "ClassPojo [partial_match = "+partial_match+", place_id = "+place_id+", address_components = "+address_components+", formatted_address = "+formatted_address+", types = "+types+", geometry = "+geometry+"]";
+        return "ClassPojo [partial_match = "+partialMatch+", place_id = "+placeID+", address_components = "+addressComponents+", formattedAddress = "+ formattedAddress +", types = "+types+", geometry = "+geometry+"]";
     }
 }

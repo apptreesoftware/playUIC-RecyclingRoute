@@ -1,37 +1,21 @@
 package GoogleGeocode;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Orozco on 1/19/17.
  */
 public class Location
 {
-    private double lng;
+    @JsonProperty("lng")
+    public double longitude;
 
-    private double lat;
-
-    public double getLng ()
-    {
-        return lng;
-    }
-
-    public void setLng (double lng)
-    {
-        this.lng = lng;
-    }
-
-    public double getLat ()
-    {
-        return lat;
-    }
-
-    public void setLat (double lat)
-    {
-        this.lat = lat;
-    }
+    @JsonProperty("lat")
+    public double lattitude;
 
     @Override
     public String toString()
     {
-        return "ClassPojo [lng = "+lng+", lat = "+lat+"]";
+        return "ClassPojo [longitude = "+longitude+", lattitude = "+lattitude+"]";
     }
 }
