@@ -1,7 +1,6 @@
 package model;
 
 import com.avaje.ebean.Model;
-import com.google.inject.Inject;
 import org.joda.time.DateTime;
 import sdk.data.DataSetItem;
 import sdk.data.ServiceConfigurationAttribute;
@@ -10,7 +9,6 @@ import sdk.models.Location;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by eddie on 11/21/16.
