@@ -34,10 +34,19 @@ public class LocationManager {
         return Observable.create(subscriber -> {
             subscriber.onStart();
             request.get().thenAccept(response -> {
-                GoogleGeocodeResponse googleResponse = Json.fromJson(response.asJson(), GoogleGeocodeResponse.class);
-                GoogleGeocode.Location location = googleResponse.getResults()[0].geometry.location;
-                subscriber.onNext(location);
-                subscriber.onCompleted();
+                try {
+                    GoogleGeocodeResponse googleResponse = Json.fromJson(response.asJson(), GoogleGeocodeResponse.class);
+                    if ( googleResponse.getResults().length > 0) {
+                        GoogleGeocode.Location location = googleResponse.getResults()[0].geometry.location;
+                        subscriber.onNext(location);
+                    } else {
+                        subscriber.onError(new RuntimeException("Location not found from google"));
+                    }
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                } finally {
+                    subscriber.onCompleted();
+                }
             });
         });
     }

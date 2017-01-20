@@ -1,6 +1,7 @@
 package data;
 
 import GoogleGeocode.Location;
+import com.avaje.ebean.Model;
 import model.Route;
 import model.RouteStop;
 import play.Logger;
@@ -57,22 +58,7 @@ public class RouteDataSource implements DataSource, CacheableList {
         route.copyFrom(dataSetItem);
         return Observable.just(route)
                 .flatMap(route1 -> Observable.from(route1.getStops()))
-                .flatMap(routeStop -> {
-                    if (routeStop.hasValidLocation()) {
-                        return Observable.just(routeStop);
-                    } else {
-                        return hydrateLocationForRouteStop(routeStop)
-                                .doOnNext(location -> {
-                                    if (location != null ) {
-                                        routeStop.setLatitude(location.lattitude);
-                                        routeStop.setLongitude(location.longitude);
-                                        routeStop.update();
-                                    }
-                                })
-                                .map(location -> routeStop);
-
-                    }
-                })
+                .flatMap(this::hydrateRouteStopIfNecessary)
                 .toList()
                 .map(list -> route)
                 .map(updatedRoute -> {
@@ -86,6 +72,19 @@ public class RouteDataSource implements DataSource, CacheableList {
                         .build());
     }
 
+    public Observable<RouteStop> hydrateRouteStopIfNecessary(RouteStop routeStop) {
+        if (routeStop.hasValidLocation()) {
+            return Observable.just(routeStop);
+        } else {
+            return hydrateLocationForRouteStop(routeStop)
+                    .doOnNext(updatedRouteStop -> {
+                        if ( updatedRouteStop.hasValidLocation() ) {
+                            updatedRouteStop.update();
+                        }
+                    });
+
+        }
+    }
 
     @Override
         public Observable<RecordActionResponse> createRecord(DataSetItem dataSetItem, AuthenticationInfo authenticationInfo, Parameters params) {
@@ -93,22 +92,7 @@ public class RouteDataSource implements DataSource, CacheableList {
             route.copyFrom(dataSetItem);
             return Observable.just(route)
                     .flatMap(route1 -> Observable.from(route1.getStops()))
-                    .flatMap(routeStop -> {
-                        if (routeStop.hasValidLocation()) {
-                            return Observable.just(routeStop);
-                        } else {
-                            return hydrateLocationForRouteStop(routeStop)
-                                    .doOnNext(location -> {
-                                        if (location != null ) {
-                                            routeStop.setLatitude(location.lattitude);
-                                            routeStop.setLongitude(location.longitude);
-                                            routeStop.update();
-                                        }
-                                    })
-                                    .map(location -> routeStop);
-
-                        }
-                    })
+                    .flatMap(this::hydrateRouteStopIfNecessary)
                     .toList()
                     .map(list -> route)
                     .map(updatedRoute -> {
@@ -145,8 +129,14 @@ public class RouteDataSource implements DataSource, CacheableList {
         return "Route List";
     }
 
-    private Observable<Location> hydrateLocationForRouteStop(RouteStop routeStop) {
+    private Observable<RouteStop> hydrateLocationForRouteStop(RouteStop routeStop) {
         LocationManager locationManager = new LocationManager(getWSClient());
-        return locationManager.getLocationFromAddress(routeStop.getAddress()).onErrorReturn(null);
+        return locationManager.getLocationFromAddress(routeStop.getAddress())
+                .doOnNext(location -> {
+                    routeStop.setLatitude(location.lattitude);
+                    routeStop.setLongitude(location.longitude);
+                })
+                .map(location -> routeStop)
+                .onErrorReturn(throwable -> routeStop);
     }
 }
