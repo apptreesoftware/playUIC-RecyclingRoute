@@ -14,6 +14,8 @@ libraryDependencies ++= Seq(
   filters
 )
 
+
+
 libraryDependencies += "commons-dbutils" % "commons-dbutils" % "1.6"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 libraryDependencies += "postgresql" % "postgresql" % "9.3-1102.jdbc41"

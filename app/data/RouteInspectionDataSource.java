@@ -102,7 +102,6 @@ public class RouteInspectionDataSource implements InspectionSource {
         action.copyTo(responseDataSetItem);
 
         if ( action.getRouteException() != null && action.isNotifyContactOnException() && action.getContactEmail() != null ) {
-            //Notify of exception
             Logger.debug("Send email about exception");
         }
         if ( action.isNotifyContactOnNext() ) {
