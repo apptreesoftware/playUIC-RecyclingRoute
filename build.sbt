@@ -32,7 +32,7 @@ lazy val sdk = (project in file("sdk")).enablePlugins(PlayJava, PlayEbean)
 
 doc in Compile <<= target.map(_ / "none")
 
-packageName in Universal := "uic"
+packageName in Universal := "uic_refuse_0.1"
 herokuAppName in Compile := "connector"
 
 mappings in Universal ++=
