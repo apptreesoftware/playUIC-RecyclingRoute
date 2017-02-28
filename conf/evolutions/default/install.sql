@@ -72,9 +72,9 @@ create table grr_route_coll_action (
   constraint uq_grr_route_coll_act_pku_itm1 unique (pickup_item_1),
   constraint uq_grr_route_coll_pku_itm1_ms unique (pickup_item_1_measurement),
   constraint uq_grr_route_coll_act_pku_itm2 unique (pickup_item_2),
-  constraint uq_grr_route_coll_pku_itm1_ms unique (pickup_item_2_measurement),
+  constraint uq_grr_route_coll_pku_itm2_ms unique (pickup_item_2_measurement),
   constraint uq_grr_route_coll_act_pku_itm3 unique (pickup_item_3),
-  constraint uq_grr_route_coll_pku_itm1_ms unique (pickup_item_3_measurement),
+  constraint uq_grr_route_coll_pku_itm3_ms unique (pickup_item_3_measurement),
   constraint pk_grr_route_coll_action primary key (route_coll_action_id)
 );
 create sequence route_coll_action_id_seq;
