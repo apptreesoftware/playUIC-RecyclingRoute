@@ -1,10 +1,9 @@
 package data;
 
-import GoogleGeocode.Location;
-import com.avaje.ebean.Model;
+
 import model.Route;
 import model.RouteStop;
-import play.Logger;
+import play.Play;
 import rx.Observable;
 import sdk.data.DataSet;
 import sdk.data.DataSetItem;
@@ -130,7 +129,8 @@ public class RouteDataSource implements DataSource, CacheableList {
     }
 
     private Observable<RouteStop> hydrateLocationForRouteStop(RouteStop routeStop) {
-        LocationManager locationManager = new LocationManager(getWSClient());
+        String googleApiKey = Play.application().configuration().getString("GOOGLE_API_KEY");
+        LocationManager locationManager = new LocationManager(getWSClient(), googleApiKey);
         return locationManager.getLocationFromAddress(routeStop.getAddress())
                 .doOnNext(location -> {
                     routeStop.setLatitude(location.lattitude);
