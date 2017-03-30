@@ -3,6 +3,8 @@ package util;
 import GoogleGeocode.GoogleGeocodeResponse;
 import GoogleGeocode.Results;
 import com.google.inject.Inject;
+import play.api.Application;
+import play.api.Play;
 import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
@@ -20,11 +22,12 @@ public class LocationManager {
 
     private WSClient client;
 
-    private static String googleApiKey = "AIzaSyAEKkPcA0v7xZOje96DGqhlJfQAZWuQsEQ";
+    private String googleApiKey;
 
     @Inject
-    public LocationManager(WSClient client) {
+    public LocationManager(WSClient client, String googleApiKey) {
         this.client = client;
+        this.googleApiKey = googleApiKey;
     }
 
     public Observable<GoogleGeocode.Location> getLocationFromAddress(String address) {
