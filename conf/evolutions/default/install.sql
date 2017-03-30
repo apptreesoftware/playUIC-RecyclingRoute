@@ -11,10 +11,11 @@ create table grr_pickup_type (
 create sequence pickup_type_id_seq;
 
 create table grr_pickup_quantity_type (
-  id                            serial not null,
+  id                            integer not null,
   quantity_name                 varchar(255),
   constraint pk_grr_pickup_quantity_type primary key (id)
 );
+create sequence quantity_type_id_seq;
 
 create table grr_route (
   route_id                      integer not null,
@@ -103,6 +104,7 @@ create table grr_route_stop (
   route_stop_lon                float,
   enter_date                    timestamp,
   modify_date                   timestamp,
+  contact_phone                 varchar(255),
   pickup_item_1                 integer,
   pickup_item_1_measurement     integer,
   pickup_item_2                 integer,
@@ -205,6 +207,7 @@ drop table if exists grr_pickup_type cascade;
 drop sequence if exists pickup_type_id_seq;
 
 drop table if exists grr_pickup_quantity_type cascade;
+drop sequence if exists quantity_type_id_seq;
 
 drop table if exists grr_route cascade;
 drop sequence if exists route_id_seq;

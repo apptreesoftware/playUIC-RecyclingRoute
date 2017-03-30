@@ -16,6 +16,9 @@ import java.util.List;
 @Entity
 @Table(name = "grr_route_stop")
 public class RouteStop extends Model {
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "route_stop_id_seq")
     private int routeStopId;
@@ -110,14 +113,14 @@ public class RouteStop extends Model {
             this.contactPhone = dataSetItem.getStringAttributeAtIndex(CONTACT_PHONE);
             this.notifyContactOnException = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_EXCEPTION);
             this.notifyContactOnNext = dataSetItem.getBoolValueAtIndex(NOTIFY_CONTACT_ON_NEXT);
-            dataSetItem.getOptionalLocationAtIndex(LOCATION)
-                    .ifPresent(location -> {
-                        this.latitude = location.getLatitude();
-                        this.longitude = location.getLongitude();
-                    });
             this.enterDate = this.enterDate != null ? this.enterDate : DateTime.now();
             this.modifyDate = DateTime.now();
             this.routeStopOrder = dataSetItem.getIntAttributeAtIndex(ORDER);
+            dataSetItem.getOptionalLocationAtIndex(LOCATION)
+                    .ifPresent(location ->{
+                        this.latitude = location.getLatitude();
+                        this.longitude = location.getLongitude();
+                    });
             dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_1).ifPresent(listItem -> this.pickupItem1 = new PickupType(listItem));
             dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_2).ifPresent(listItem -> this.pickupItem2 = new PickupType(listItem));
             dataSetItem.getOptionalListItemAttributeAtIndex(PICKUP_ITEM_3).ifPresent(listItem -> this.pickupItem3 = new PickupType(listItem));
@@ -298,6 +301,10 @@ public class RouteStop extends Model {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public boolean hasValidLocation() {
+        return getLongitude() != 0 && getLatitude() != 0;
     }
 
     public DateTime getEnterDate() {
